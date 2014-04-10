@@ -30,7 +30,7 @@ class QState{
  -Type center
  -Type right
  -Type bottom 
- +boolean is(Type)
+ +is(t:Type):boolean
 }
 
 QState --o QLink
@@ -38,6 +38,7 @@ class QLink {
  -QState from
  -QState to
  -int[Action.number] actionRewards
+ +getReward(a:Action):int
 }
 note right
 The index of a case of
@@ -58,4 +59,37 @@ of <i>stateNodesList</i> has
 as <i>from</i> the state i.
 end note
 
+interface Behavior {
+ +run(b:Body,target:Point2d,\ntargetDirection:Vector2d):BehaviorOutput
+ +live():void
+}
+
+QState --o BehaviorOutput
+class BehaviorOutput {
+ -QState front
+ -QState back
+ -QState below
+}
+
+Behavior <|.. LearningBehaviour
+QGraph --* LearningBehaviour
+class LearningBehaviour {
+ -QGraph memory
+}
+note right
+AI used for
+laboratory
+simulation
+end note
+
+Behavior <|.. ExecuteBehaviour
+LearningBehaviour --* ExecuteBehaviour
+class ExecuteBehaviour {
+ -LearningBehaviour learningBehaviour
+}
+note right
+AI used for real simulation.
+It uses the <u>QGraph</u> generated
+from the <u>LearningBehaviour</u>
+end note
 @enduml
