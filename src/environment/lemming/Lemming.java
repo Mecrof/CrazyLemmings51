@@ -23,7 +23,7 @@ public class Lemming extends WorldObject implements AgentBody {
 	public static final int RIGHT = 1;
 	
 	private DefaultFrustrum frustrum;
-	private Environment environment;
+	private LemmingEnvironment environment;
 	
 	private int direction;
 	private boolean dead;
@@ -31,7 +31,7 @@ public class Lemming extends WorldObject implements AgentBody {
 	
 	private Influence influence;
 	
-	public Lemming(Environment e, int x, int y, boolean t, int direction, DefaultFrustrum f) {
+	public Lemming(LemmingEnvironment e, int x, int y, boolean t, int direction, DefaultFrustrum f) {
 		super(x,y,t);
 		frustrum = f;
 		environment = e;
@@ -43,50 +43,36 @@ public class Lemming extends WorldObject implements AgentBody {
 	@Override
 	public List<Perceivable> getPerception() {
 		LinkedList<Perceivable> perceivedObjects = new LinkedList<Perceivable>();
-		try 
-		{
-			Cell currentCell = this.getCurrentCell(environment);
+
+		Cell currentCell;
+		try {
+			currentCell = this.getCurrentCell(environment);
+			
 			// gets cells perceived by the body, if currentCell is out of borders, CellNotFound is thrown
 			List<Cell> cells = frustrum.getPerceivedCells(currentCell);
 			// goes through the perceived cells
 			Iterator<Cell> itCells = cells.iterator();
 			while(itCells.hasNext())
 			{
-				Cell cell = itCells.next();
-				Point delta = new Point();
-				Point cellPosition = cell.getPosition();
 				
-				Iterator<WorldObject> itObjects = cell.getIterator();
-				Type type = Type.EMTPY;
+				Cell cell = itCells.next();
+				Point cellPosition = cell.getPosition();
+				Type type;
 				// gets type of the cell
-				while(itObjects.hasNext())
-				{
-					WorldObject obj = itObjects.next();
-					if(obj instanceof GroundObject)
-					{
-						type = ((GroundObject) obj).getType();
-						break;
-					}
-				}
-				// if it is still an empty, let's check if it may be a floor
+				if (cell instanceof TypeCell)
+					type = ((TypeCell) cell).getType();
+				else
+					type = Type.EMTPY;
+								// if it is still an empty, let's check if it may be a floor
 				if (type == Type.EMTPY)
 				{
-					try
-					{
-						Cell bellowCell = environment.getCellAt(cellPosition.x, cellPosition.y+1);
-						itObjects = bellowCell.getIterator();
-						while(itObjects.hasNext())
+					try {
+						Cell bottomCell = environment.getCellAt(cellPosition.x, cellPosition.y+1);
+						if (bottomCell instanceof TypeCell && !Type.isTraversable( ((TypeCell) bottomCell).getType() ) )
 						{
-							if(itObjects.next() instanceof GroundObject)
-							{
-								type = Type.FLOOR;
-								break;
-							}
+							type = Type.FLOOR;
 						}
-					}
-					// exception if the cell is on bottom border
-					catch (CellNotFoundException c)
-					{
+					} catch (CellNotFoundException e) { // we are at the bottom of the world
 						type = Type.FLOOR;
 					}
 				}
@@ -97,10 +83,10 @@ public class Lemming extends WorldObject implements AgentBody {
 																type);
 				perceivedObjects.add(perceivedType);
 			}
-		} catch (CellNotFoundException e) 
-		{
-			e.printStackTrace();
+		} catch (CellNotFoundException e1) {
+			e1.printStackTrace();
 		}
+	
 		return perceivedObjects;
 	}
 

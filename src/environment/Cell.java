@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 
-public class Cell {
+public abstract class Cell {
 	
 	private Point position;
 	private LinkedList<WorldObject> objects;
@@ -17,8 +17,7 @@ public class Cell {
 	
 	public Cell (Point p)
 	{
-		this();
-		this.position = new Point(p.x,p.y);
+		this(p.x, p.y);
 	}
 	
 	public Cell(int x, int y)

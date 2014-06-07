@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import qlearning.Agent;
 import environment.Environment;
 import environment.Influence;
+import environment.Reward;
+import environment.lemming.ActionInfluence;
 import environment.lemming.Lemming;
 
 public class LemmingEngine implements Engine {
@@ -54,10 +56,44 @@ public class LemmingEngine implements Engine {
 			{
 				Lemming lemming = itLem.next();
 				Influence influence = lemming.getInfluence();
+				/*Reward reward;
+				if (influence instanceof ActionInfluence)
+				{
+					reward = this.applyActionInfluence((ActionInfluence) influence, lemming);
+				}
+				else
+				{
+					reward = new Reward(Reward.NOTHING_HAPPENED);
+				}*/
 				// TODO APPLY INFLUENCE & SEND REWARD TO AGENT
 			}
 			this.environment.fireChange();
 		}
+	}
+	
+	private Reward applyActionInfluence(ActionInfluence influence, Lemming lemming)
+	{
+		Reward reward;
+		switch (influence.getAction()) {
+		case WALK_FRONT:
+			
+			break;
+		case WALK_BACK:
+			
+			break;
+		case DIG_FRONT:
+			
+			break;
+		case DIG_BACK:
+
+			break;
+		case DIG_BELOW:
+
+			break;
+		default:
+			reward = new Reward(Reward.NOTHING_HAPPENED);
+		}
+		return null;
 	}
 	
 	public boolean enableAgent(Agent<Lemming> ag)

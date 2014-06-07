@@ -1,21 +1,22 @@
 package environment.lemming;
 
 import qlearning.Action;
+import qlearning.Agent;
 import environment.AgentBody;
 import environment.Influence;
 
 public class ActionInfluence implements Influence {
 	
-	private final AgentBody emitter;
+	private final Agent<AgentBody> emitter;
 	private Action action;
 	
-	public ActionInfluence(AgentBody emitter, Action action) {
+	public ActionInfluence(Agent<AgentBody> emitter, Action action) {
 		this.emitter = emitter;
 		this.action = action;
 	}
 
 	@Override
-	public AgentBody getEmitter() {
+	public Agent<AgentBody> getEmitter() {
 		return emitter;
 	}
 

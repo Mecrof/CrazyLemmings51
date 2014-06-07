@@ -1,7 +1,9 @@
 package environment;
 
+import qlearning.Agent;
+
 public interface Influence {
 	
-	public AgentBody getEmitter();
+	public Agent<AgentBody> getEmitter();
 
 }

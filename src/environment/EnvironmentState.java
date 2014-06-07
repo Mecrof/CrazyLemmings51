@@ -2,16 +2,16 @@ package environment;
 
 import java.util.LinkedList;
 
-public class EnvironmentState {
+public class EnvironmentState<C extends Cell> {
 
-	private LinkedList<Cell> world;
+	private LinkedList<C> world;
 	
-	public EnvironmentState(LinkedList<Cell> world)
+	public EnvironmentState(LinkedList<C> cells)
 	{
-		this.world = world;
+		this.world = cells;
 	}
 	
-	public LinkedList<Cell> getCurrentState() 
+	public LinkedList<C> getCurrentState() 
 	{
 		return this.world;
 	}

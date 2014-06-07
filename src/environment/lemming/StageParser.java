@@ -1,12 +1,11 @@
-package environment;
+package environment.lemming;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import environment.lemming.GroundObject;
-import environment.lemming.Type;
+import environment.Cell;
 
 public class StageParser {
 
@@ -42,7 +41,7 @@ public class StageParser {
 		}
 	}
 	
-	public void setCellOjbect(Cell cell)
+	public void setCellOjbect(TypeCell c)
 	{
 		try 
 		{
@@ -51,22 +50,22 @@ public class StageParser {
 			switch((char) charRead)
 			{
 				case '\n':
-					this.setCellOjbect(cell);
+					this.setCellOjbect(c);
 					break;
 				case '\r':
-					this.setCellOjbect(cell);
+					this.setCellOjbect(c);
 					break;
 				case 'V':
 					//nothing to do
 					break;
 				case 'G':
-					cell.addWorldObject(new GroundObject(cell.getPosition(), Type.CLAY));
+					c.setType(Type.CLAY);
 					break;
 				case 'R':
-					cell.addWorldObject(new GroundObject(cell.getPosition(), Type.ROCK));
+					c.setType(Type.ROCK);
 					break;
 				case 'F':
-					cell.addWorldObject(new GroundObject(cell.getPosition(), Type.CLAY));
+					c.setType(Type.CLAY);
 					break;
 			}
 		} 

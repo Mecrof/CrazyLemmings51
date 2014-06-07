@@ -5,10 +5,9 @@ import java.util.Iterator;
 
 import javax.swing.JPanel;
 
-import environment.Cell;
 import environment.EnvironmentState;
 import environment.WorldObject;
-import environment.lemming.GroundObject;
+import environment.lemming.TypeCell;
 import listener.EnvironmentEvent;
 import listener.EnvironmentListener;
 import gui.sprites.Exit;
@@ -29,7 +28,7 @@ public class World extends JPanel implements EnvironmentListener {
 	private final Start start;
 	private final Exit exit;
 	
-	private EnvironmentState state;
+	private EnvironmentState<TypeCell> state;
 	
 	public World()
 	{
@@ -45,40 +44,27 @@ public class World extends JPanel implements EnvironmentListener {
 	public void paintComponent(Graphics g)
 	{
 		g.clearRect(0, 0, this.getWidth(), this.getHeight());
-		Iterator<WorldObject> i;
-		WorldObject o = null;
 
 		if(this.state == null)
 			return;
 		
-		for(Cell cell : this.state.getCurrentState())
+		for(TypeCell cell : this.state.getCurrentState())
 		{
-			i = cell.getIterator();
-			
-			while(i.hasNext())
-			{
-				o = i.next();
-				
-				if(o instanceof GroundObject)
-				{
-					switch(((GroundObject) o).getType())
-					{
-					case CLAY:
-						this.ground.paint(g, o.getPosition());
-						break;
-					case EMTPY:
-						break;
-					case FLOOR:
-						this.groundUp.paint(g, o.getPosition());
-						break;
-					case ROCK:
-						this.rock.paint(g, o.getPosition());
-						break;
-					default:
-						break;
-					
-					}
-				}
+		
+			switch (cell.getType()) {
+				case CLAY:
+					this.ground.paint(g, cell.getPosition());
+					break;
+				case EMTPY:
+					break;
+				case FLOOR:
+					this.groundUp.paint(g, cell.getPosition());
+					break;
+				case ROCK:
+					this.rock.paint(g, cell.getPosition());
+					break;
+				default:
+					break;
 			}
 		}
 	}

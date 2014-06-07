@@ -28,7 +28,7 @@ public enum Type {
 		if (t == Type.FLOOR)
 			return 'F';
 		if (t == Type.CLAY)
-			return 'G';
+			return 'C';
 		if (t == Type.ROCK)
 			return 'R';
 		return ' ';
