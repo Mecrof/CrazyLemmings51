@@ -56,6 +56,7 @@ public class LemmingEngine implements Engine {
 				Influence influence = lemming.getInfluence();
 				// TODO APPLY INFLUENCE & SEND REWARD TO AGENT
 			}
+			this.environment.fireChange();
 		}
 	}
 	

@@ -3,7 +3,8 @@ package environment.lemming;
 public enum Type {
 	EMTPY(0),
 	FLOOR(2),
-	GROUND(1);
+	CLAY(1),
+	ROCK(3);
 	
 	public final int id;
 	
@@ -15,7 +16,8 @@ public enum Type {
 		{
 		case 0: return Type.EMTPY;
 		case 2: return Type.FLOOR;
-		case 1: return Type.GROUND;
+		case 1: return Type.CLAY;
+		case 3: return Type.ROCK;
 		default: return null;
 		}
 	}
@@ -25,8 +27,10 @@ public enum Type {
 			return 'E';
 		if (t == Type.FLOOR)
 			return 'F';
-		if (t == Type.GROUND)
+		if (t == Type.CLAY)
 			return 'G';
+		if (t == Type.ROCK)
+			return 'R';
 		return ' ';
 	}
 	

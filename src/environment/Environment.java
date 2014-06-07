@@ -5,9 +5,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import listener.EnvironmentEvent;
 import listener.EnvironmentListener;
 import environment.exceptions.CellNotFoundException;
 import environment.lemming.Type;
+import gui.sprites.Sprite;
 
 public class Environment {
 	
@@ -29,12 +31,18 @@ public class Environment {
 	{
 		Cell c;
 		cells = new LinkedList<Cell>();
+		StageParser parser = new StageParser("../stage/stage_1");
+		parser.load();
 		for (int i = 0; i < this.height; ++i)
+		{
 			for(int j = 0; j < this.width; ++j)
 			{
-				c = new Cell(i,j);
+				c = new Cell(Sprite.WIDTH * j, Sprite.HEIGHT * i);
+				parser.setCellOjbect(c);
 				this.cells.add(c);
 			}
+		}
+		parser.close();
 	}
 	
 	public Cell getCellAt(int x, int y) throws CellNotFoundException
@@ -90,7 +98,7 @@ public class Environment {
 		Iterator<EnvironmentListener> it = listeners.iterator();
 		while(it.hasNext())
 		{
-			it.next().onEnvironmentChanged();
+			it.next().onEnvironmentChanged(new EnvironmentEvent(new EnvironmentState(this.cells)));
 		}
 	}
 	
