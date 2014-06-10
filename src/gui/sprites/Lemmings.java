@@ -23,11 +23,11 @@ public class Lemmings extends Sprite {
 		this.right = new BufferedImage(Sprite.WIDTH, Sprite.HEIGHT, BufferedImage.TYPE_INT_RGB);
 		this.right.getGraphics().drawImage(this.image, 0, 0, 10, 10, 20, 0, 30, 10, null);
 		
-		this.digLeft = new BufferedImage(Sprite.WIDTH, Sprite.HEIGHT, BufferedImage.TYPE_INT_RGB);
-		this.digLeft.getGraphics().drawImage(this.image, 0, 0, 10, 10, 22, 327, 32, 338, null);
-		
 		this.digRight = new BufferedImage(Sprite.WIDTH, Sprite.HEIGHT, BufferedImage.TYPE_INT_RGB);
-		this.digRight.getGraphics().drawImage(this.image, 0, 0, 10, 10, 16, 301, 26, 313, null);
+		this.digRight.getGraphics().drawImage(this.image, 0, 0, 10, 10, 22, 327, 32, 338, null);
+		
+		this.digLeft = new BufferedImage(Sprite.WIDTH, Sprite.HEIGHT, BufferedImage.TYPE_INT_RGB);
+		this.digLeft.getGraphics().drawImage(this.image, 0, 0, 10, 10, 16, 301, 26, 313, null);
 		
 		this.dead = new BufferedImage(Sprite.WIDTH, Sprite.HEIGHT, BufferedImage.TYPE_INT_RGB);
 		this.dead.getGraphics().drawImage(this.image, 0, 0, 10, 10, 69, 173, 76, 180, null);
