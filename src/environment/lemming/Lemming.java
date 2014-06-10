@@ -25,6 +25,7 @@ public class Lemming extends WorldObject implements AgentBody {
 	private Sensor frustrum;
 	
 	private int direction;
+	private boolean digging;
 	private boolean dead;
 	private Reward reward;
 	
@@ -35,6 +36,7 @@ public class Lemming extends WorldObject implements AgentBody {
 		frustrum = f;
 		this.setDirection(direction);
 		this.dead = false;
+		this.digging = false;
 		this.reward = new Reward(Reward.NOTHING_HAPPENED);
 	}
 
@@ -158,6 +160,14 @@ public class Lemming extends WorldObject implements AgentBody {
 	public final Influence getInfluence()
 	{
 		return this.influence;
+	}
+
+	public boolean isDigging() {
+		return digging;
+	}
+
+	public void setDigging(boolean digging) {
+		this.digging = digging;
 	}
 
 }

@@ -13,15 +13,16 @@ public class Main {
 		LemmingEnvironment e = new LemmingEnvironment(80, 60);
 		Portal portal = new Portal(70,52,true);
 		e.setPortal(portal);
-		//System.out.println(e.toString());
-		LemmingEngine engine = new LemmingEngine(e, 1000);
-		RandomLemmingAgent lemming = new RandomLemmingAgent(27, 45, new DefaultFrustrum(e));
+		
+		LemmingEngine engine = new LemmingEngine(e, 50);
+		RandomLemmingAgent lemming = new RandomLemmingAgent(27, 50, new DefaultFrustrum(e));
 		engine.enableAgent(lemming);
 		GUI gui = new GUI();
 		e.addListener(gui.WorldPanel());
 		engine.initialize();
 		gui.pack();
 		//gui.setVisible(true);
+		System.out.println(e.toString());
 		engine.run();
 	}
 

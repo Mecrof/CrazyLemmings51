@@ -4,28 +4,38 @@ import environment.Sensor;
 import environment.lemming.ActionInfluence;
 import environment.lemming.Lemming;
 
-public class RandomLemmingAgent extends Agent<Lemming> {
-	
-	private Lemming body;
+public class RandomLemmingAgent extends LemmingAgent {
 	
 	public RandomLemmingAgent(int posX, int posY, Sensor s) {
-		this.body = new Lemming(posX, posY, true, Lemming.RIGHT, s);
+		super(posX, posY, true, Lemming.RIGHT, s);
 	}
-
-	@Override
-	public Lemming createBody() {
-		return body;
-	}
-
+	
 	@Override
 	public void live() {
-		System.out.println("Reward obtained = "+body.getReward()+ " and position :"+body.getPosition());
-		double r = Math.random();
+		//System.out.println("Reward obtained = "+body.getReward()+ " and position :"+body.getPosition());
+		int r = (int)(Math.random()*5.0);
 		ActionInfluence action;
-		if(r<0.5)
+		switch (r) {
+		case 0:
 			action = new ActionInfluence(this, Action.WALK_FRONT);
-		else
+			break;
+		case 1:
 			action = new ActionInfluence(this, Action.WALK_BACK);
+			break;
+		case 2:
+			action = new ActionInfluence(this, Action.DIG_FRONT);
+			break;
+		case 3:
+			action = new ActionInfluence(this, Action.DIG_BACK);
+			break;
+		case 4:
+			action = new ActionInfluence(this, Action.DIG_BELOW);
+			break;
+
+		default:
+			action = new ActionInfluence(this, Action.STAY);
+			break;
+		}
 		this.body.influence(action);
 	}
 
