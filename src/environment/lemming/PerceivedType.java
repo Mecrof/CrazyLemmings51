@@ -31,5 +31,12 @@ public class PerceivedType implements Perceivable {
 	public boolean isType(Type t) {
 		return this.type == t;
 	}
+	
+	@Override
+	public String toString() {
+		return "[("+ position.x + "," + position.y + "), ("
+				+delta.x+","+delta.y+"), "
+				+Type.getLetter(type)+"]";
+	}
 
 }

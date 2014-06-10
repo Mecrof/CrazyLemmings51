@@ -2,10 +2,10 @@ package environment;
 
 import java.util.List;
 
-public interface Sensor {
+public interface Sensor<C extends Cell> {
 	
-	public List<?> getPerceivedCells(Cell currentCell);
+	public List<C> getPerceivedCells(C currentCell);
 	
-	public Environment<?> getEnvironment();
+	public Environment<C> getEnvironment();
 
 }

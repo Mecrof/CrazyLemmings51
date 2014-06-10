@@ -54,16 +54,17 @@ public class Lemming extends WorldObject implements AgentBody {
 			Iterator<Cell> itCells = cells.iterator();
 			while(itCells.hasNext())
 			{
-				
 				Cell cell = itCells.next();
-				Point cellPosition = cell.getPosition();
+				
 				Type type;
+				Point cellPosition = cell.getPosition();
+				
 				// gets type of the cell
 				if (cell instanceof TypeCell)
 					type = ((TypeCell) cell).getType();
 				else
 					type = Type.EMTPY;
-								// if it is still an empty, let's check if it may be a floor
+				// if it is still an empty, let's check if it may be a floor
 				if (type == Type.EMTPY)
 				{
 					try {

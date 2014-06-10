@@ -41,7 +41,11 @@ public abstract class Environment<C extends Cell> {
 		return this.getCellAt(p.x, p.y);
 	}
 	
-	public void generateWorld(int worldType)// TODO : NOT FONCTIONNAL YET!
+	/**
+	 * NOT FUNCTIONNAL YET !	
+	 * @param worldType
+	 */
+	public void generateWorld(int worldType)
 	{
 		switch(worldType)
 		{
@@ -50,6 +54,9 @@ public abstract class Environment<C extends Cell> {
 		}
 	}
 	
+	/**
+	 * NOT FUNCTIONNAL YET !
+	 */
 	private void generateRandom() // TODO : NOT FONCTIONNAL YET!
 	{
 		for (int i = this.height-1; i >= 0; --i)

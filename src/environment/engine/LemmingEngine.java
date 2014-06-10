@@ -86,7 +86,7 @@ public class LemmingEngine implements Engine {
 				lemming.setReward(reward);
 			}
 			this.environment.fireChange();
-			System.out.println(this.environment.toString());
+			//System.out.println(this.environment.toString());
 		}
 	}
 	

@@ -1,8 +1,13 @@
 package qlearning;
 
+import java.util.Iterator;
+import java.util.List;
+
+import environment.Perceivable;
 import environment.Sensor;
 import environment.lemming.ActionInfluence;
 import environment.lemming.Lemming;
+import environment.lemming.PerceivedType;
 
 public class RandomLemmingAgent extends LemmingAgent {
 	
@@ -13,6 +18,20 @@ public class RandomLemmingAgent extends LemmingAgent {
 	@Override
 	public void live() {
 		//System.out.println("Reward obtained = "+body.getReward()+ " and position :"+body.getPosition());
+		
+		System.out.println("--------------------------------------");
+		List<Perceivable> perceptions = this.getBody().getPerception();
+		Iterator<Perceivable> it = perceptions.iterator();
+		while(it.hasNext())
+		{
+			Perceivable perceivedObject = it.next();
+			if (perceivedObject instanceof PerceivedType)
+			{
+				System.out.println(perceivedObject.toString());
+			}
+		}
+		
+		
 		int r = (int)(Math.random()*5.0);
 		ActionInfluence action;
 		switch (r) {
@@ -36,7 +55,7 @@ public class RandomLemmingAgent extends LemmingAgent {
 			action = new ActionInfluence(this, Action.STAY);
 			break;
 		}
-		this.body.influence(action);
+		this.getBody().influence(action);
 	}
 
 }
