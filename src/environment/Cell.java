@@ -38,7 +38,7 @@ public abstract class Cell {
 			this.objects.add(o);
 	}
 	
-	public void detachWorlObject(WorldObject o)
+	public void detachWorldObject(WorldObject o)
 	{
 		if (this.objects.contains(o))
 			this.objects.remove(o);

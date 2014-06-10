@@ -67,6 +67,16 @@ public abstract class Environment<C extends Cell> {
 		return y*this.width+x;
 	}
 	
+	public void addWorldObject(WorldObject o) throws CellNotFoundException
+	{
+		this.getCellAt(o.getPosition()).addWorldObject(o);
+	}
+	
+	public void detachWorldObject(WorldObject o) throws CellNotFoundException
+	{
+		this.getCellAt(o.getPosition()).detachWorldObject(o);
+	}
+	
 	public boolean addListener(EnvironmentListener listener)
 	{
 		return this.listeners.add(listener);

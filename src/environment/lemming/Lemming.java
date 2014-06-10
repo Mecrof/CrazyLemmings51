@@ -22,8 +22,7 @@ public class Lemming extends WorldObject implements AgentBody {
 	public static final int LEFT = -1;
 	public static final int RIGHT = 1;
 	
-	private DefaultFrustrum frustrum;
-	private LemmingEnvironment environment;
+	private Sensor frustrum;
 	
 	private int direction;
 	private boolean dead;
@@ -31,10 +30,9 @@ public class Lemming extends WorldObject implements AgentBody {
 	
 	private Influence influence;
 	
-	public Lemming(LemmingEnvironment e, int x, int y, boolean t, int direction, DefaultFrustrum f) {
-		super(x,y,t);
+	public Lemming(int x, int y, boolean traversable, int direction, Sensor f) {
+		super(x,y,traversable);
 		frustrum = f;
-		environment = e;
 		this.setDirection(direction);
 		this.dead = false;
 		this.reward = new Reward(Reward.NOTHING_HAPPENED);
@@ -46,10 +44,10 @@ public class Lemming extends WorldObject implements AgentBody {
 
 		Cell currentCell;
 		try {
-			currentCell = this.getCurrentCell(environment);
+			currentCell = this.getCurrentCell(this.frustrum.getEnvironment());
 			
 			// gets cells perceived by the body, if currentCell is out of borders, CellNotFound is thrown
-			List<Cell> cells = frustrum.getPerceivedCells(currentCell);
+			List<Cell> cells = (List<Cell>) frustrum.getPerceivedCells(currentCell);
 			// goes through the perceived cells
 			Iterator<Cell> itCells = cells.iterator();
 			while(itCells.hasNext())
@@ -67,7 +65,7 @@ public class Lemming extends WorldObject implements AgentBody {
 				if (type == Type.EMTPY)
 				{
 					try {
-						Cell bottomCell = environment.getCellAt(cellPosition.x, cellPosition.y+1);
+						Cell bottomCell = this.frustrum.getEnvironment().getCellAt(cellPosition.x, cellPosition.y+1);
 						if (bottomCell instanceof TypeCell && !Type.isTraversable( ((TypeCell) bottomCell).getType() ) )
 						{
 							type = Type.FLOOR;
@@ -139,6 +137,11 @@ public class Lemming extends WorldObject implements AgentBody {
 	@Override
 	public Reward getReward() {
 		return this.reward;
+	}
+	
+	public void setReward(Reward r)
+	{
+		this.reward = r;
 	}
 	
 	public int getDirection() {

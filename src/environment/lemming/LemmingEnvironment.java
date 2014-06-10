@@ -10,8 +10,11 @@ import gui.sprites.Sprite;
 
 public class LemmingEnvironment extends Environment<TypeCell> {
 
+	private Portal portal;
+	
 	public LemmingEnvironment(int w, int h) {
 		super(w, h);
+		this.portal = null;
 	}
 
 	@Override
@@ -25,7 +28,7 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 		{
 			for(int j = 0; j < this.width; ++j)
 			{
-				c = new TypeCell(Sprite.WIDTH * j, Sprite.HEIGHT * i);
+				c = new TypeCell(j, i);
 				parser.setCellOjbect(c);
 				this.cells.add(c);
 			}
@@ -51,7 +54,29 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 				{
 					try {
 						if (!Type.isTraversable(this.getCellAt(j, i+1).getType()))
-							res+="_";
+						{
+							Iterator<WorldObject> it = c.getIterator();
+							String content = "_";
+							while(it.hasNext())
+							{
+								WorldObject ob = it.next();
+								
+								if (ob instanceof Portal)
+								{
+									content = "$";
+								}
+								else if(ob instanceof Lemming)
+								{
+									if (((Lemming) ob).isDead())
+										content = "t";
+									else if (((Lemming) ob).getDirection() == Lemming.RIGHT)
+										content = "E";
+									else
+										content = "3";
+								}
+							}
+							res+=content;
+						}							
 						else
 							res+=" ";
 					} catch (CellNotFoundException e) {
@@ -63,6 +88,22 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 			}
 		}
 		return res;
+	}
+	
+	public boolean setPortal(Portal p)
+	{
+		try {
+			this.addWorldObject(p);
+			this.portal = p;
+			return true;
+		} catch (CellNotFoundException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public final Portal getPortal() {
+		return portal;
 	}
 
 }

@@ -41,5 +41,14 @@ public class Reward {
 			}
 		}
 	}
+	
+	public int getReward() {
+		return reward;
+	}
+
+	@Override
+	public String toString() {
+		return ""+reward;
+	}
 
 }

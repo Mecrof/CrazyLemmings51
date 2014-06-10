@@ -1,24 +1,34 @@
 package environment.engine;
 
+import java.awt.Point;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import qlearning.Action;
 import qlearning.Agent;
 import environment.Environment;
 import environment.Influence;
 import environment.Reward;
+import environment.WorldObject;
+import environment.exceptions.CellNotFoundException;
 import environment.lemming.ActionInfluence;
 import environment.lemming.Lemming;
+import environment.lemming.LemmingEnvironment;
+import environment.lemming.Type;
+import environment.lemming.TypeCell;
 
 public class LemmingEngine implements Engine {
 	
+	private final int HIGH_TO_DIE = 7;
+	
 	private int timePerFrame;
-	private Environment environment;
+	private LemmingEnvironment environment;
 	private LinkedList<Lemming> lemmings;
 	private LinkedList<Agent<Lemming>> agents;
 	private boolean ended;
 	
-	public LemmingEngine(Environment e, int tpf) {
+	
+	public LemmingEngine(LemmingEnvironment e, int tpf) {
 		this.environment = e;
 		this.timePerFrame = tpf;
 		lemmings = new LinkedList<Lemming>();
@@ -32,7 +42,14 @@ public class LemmingEngine implements Engine {
 		lemmings = new LinkedList<Lemming>();
 		while(it.hasNext())
 		{
-			lemmings.add(it.next().createBody());
+			Lemming body = it.next().createBody();
+			try {
+				environment.addWorldObject(body);
+			} catch (CellNotFoundException e) {
+				System.out.println("ERROR::LemmingEngine::initialize::Lemming can not be added into the environment.");
+				e.printStackTrace();
+			}
+			lemmings.add(body);
 		}
 		this.ended = false;
 	}
@@ -56,7 +73,7 @@ public class LemmingEngine implements Engine {
 			{
 				Lemming lemming = itLem.next();
 				Influence influence = lemming.getInfluence();
-				/*Reward reward;
+				Reward reward;
 				if (influence instanceof ActionInfluence)
 				{
 					reward = this.applyActionInfluence((ActionInfluence) influence, lemming);
@@ -64,36 +81,150 @@ public class LemmingEngine implements Engine {
 				else
 				{
 					reward = new Reward(Reward.NOTHING_HAPPENED);
-				}*/
+				}
+				lemming.setReward(reward);
 				// TODO APPLY INFLUENCE & SEND REWARD TO AGENT
 			}
 			this.environment.fireChange();
+			System.out.println(this.environment.toString());
 		}
 	}
 	
 	private Reward applyActionInfluence(ActionInfluence influence, Lemming lemming)
 	{
-		Reward reward;
-		switch (influence.getAction()) {
-		case WALK_FRONT:
+		if (!lemming.isDead())
+		{
+			Reward reward = new Reward(Reward.VERY_BAD_ACTION);
 			
-			break;
-		case WALK_BACK:
-			
-			break;
-		case DIG_FRONT:
-			
-			break;
-		case DIG_BACK:
-
-			break;
-		case DIG_BELOW:
-
-			break;
-		default:
-			reward = new Reward(Reward.NOTHING_HAPPENED);
+			switch (influence.getAction()) {
+			case WALK_FRONT:
+				return walk(lemming, Action.WALK_FRONT);
+			case WALK_BACK:
+				return walk(lemming, Action.WALK_BACK);
+			case DIG_FRONT:
+				int direction = lemming.getDirection();
+				Point position = lemming.getPosition();
+				
+				return null;
+			case DIG_BACK:
+				return null;
+			case DIG_BELOW:
+				return null;
+			default:
+				return new Reward(Reward.NOTHING_HAPPENED);
+			}
 		}
-		return null;
+		return new Reward(Reward.NOTHING_HAPPENED);
+	}
+	
+	private Reward walk(Lemming lemming, Action action)
+	{
+		Reward reward = new Reward(Reward.VERY_BAD_ACTION);
+		Point currentPosition = lemming.getPosition();
+		try{
+			TypeCell targetCell = this.getTargetCell(lemming, action);
+			Type targetType = targetCell.getType();
+			if (targetType == Type.CLAY || targetType == Type.ROCK)
+			{
+				reward = new Reward(Reward.VERY_BAD_ACTION); // very bad because to stupid to walk against a wall...
+			}
+			else if (targetType == Type.EMTPY)
+			{
+				try{
+					TypeCell bottomTargetCell = environment.getCellAt(targetCell.getPosition().x, targetCell.getPosition().y+1);
+					if (bottomTargetCell.getType() == Type.EMTPY)
+					{
+						if(this.goDown(targetCell, lemming))
+						{
+							if (isCloserToPortal(currentPosition, lemming.getPosition()))
+								reward = new Reward(Reward.GOOD_ACTION);
+							else
+								reward = new Reward(Reward.BAD_ACTION);
+						}
+					}
+					else
+					{
+						if (isCloserToPortal(currentPosition, targetCell.getPosition()))
+							reward = new Reward(Reward.GOOD_ACTION);
+						else
+							reward = new Reward(Reward.BAD_ACTION);
+						lemming.setPosition(environment, targetCell.getPosition());
+					}
+				}catch(CellNotFoundException ex)
+				{
+					if (isCloserToPortal(currentPosition, targetCell.getPosition()))
+						reward = new Reward(Reward.GOOD_ACTION);
+					else
+						reward = new Reward(Reward.BAD_ACTION);
+					lemming.setPosition(environment, targetCell.getPosition());
+				}
+			}
+		}
+		catch (CellNotFoundException ex) // the agent tries to go outside of the environment
+		{
+			reward = new Reward(Reward.BAD_ACTION);
+		}
+		return reward;
+	}
+	
+	private boolean isCloserToPortal(Point oldPos, Point newPos)
+	{
+		Point posPortal = environment.getPortal().getPosition();
+		if (posPortal.distance(oldPos) > posPortal.distance(newPos))
+			return true;
+		return false;
+	}
+	
+	private TypeCell getTargetCell(Lemming lemming, Action action) throws CellNotFoundException
+	{
+		TypeCell targetCell;
+		Point position = lemming.getPosition();
+		if (lemming.getDirection() == Lemming.RIGHT)
+		{
+			if (action == Action.WALK_FRONT)
+			{
+				targetCell = environment.getCellAt(position.x+1, position.y);
+			}
+			else
+			{
+				targetCell = environment.getCellAt(position.x-1, position.y);
+				lemming.setDirection(Lemming.LEFT);
+			}
+		}
+		else
+		{
+			if (action == Action.WALK_FRONT)
+			{
+				targetCell = environment.getCellAt(position.x-1, position.y);
+			}
+			else
+			{
+				targetCell = environment.getCellAt(position.x+1, position.y);
+				lemming.setDirection(Lemming.RIGHT);
+			}
+		}
+		return targetCell;
+	}
+	
+	private boolean goDown(TypeCell from, Lemming lemming)
+	{
+		TypeCell tmpCell = from;
+		int high = 0;
+		try{
+		while (tmpCell.getType() == Type.EMTPY)
+		{
+			high++;
+			tmpCell = environment.getCellAt(tmpCell.getPosition().x, tmpCell.getPosition().y+1);
+		}
+		}catch(CellNotFoundException ex){} // caught if the lemming is going down on the bottom border
+		Point newPosition = new Point(from.getPosition().x, from.getPosition().y + high - 1);
+		lemming.setPosition(environment, newPosition);
+		if ( high > this.HIGH_TO_DIE )
+		{
+			lemming.setDead(true);
+			return false;
+		}
+		return true;
 	}
 	
 	public boolean enableAgent(Agent<Lemming> ag)

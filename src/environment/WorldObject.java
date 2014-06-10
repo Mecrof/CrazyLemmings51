@@ -28,7 +28,7 @@ public abstract class WorldObject {
 		this.traversable = t;
 	}
 	
-	public Cell getCurrentCell(Environment e) throws CellNotFoundException
+	public Cell getCurrentCell(Environment<?> e) throws CellNotFoundException
 	{
 		return e.getCellAt(position);
 	}
@@ -37,13 +37,13 @@ public abstract class WorldObject {
 		return position;
 	}
 
-	public void setPosition(Environment e, Point position) {
+	public void setPosition(Environment<?> e, Point position) {
 		try{
-		Cell c = e.getCellAt(this.position);
-		c.detachWorlObject(this);
-		c = e.getCellAt(position);
-		c.addWorldObject(this);
-		this.position = position;
+			Cell c = e.getCellAt(this.position);
+			c.detachWorldObject(this);
+			c = e.getCellAt(position);
+			c.addWorldObject(this);
+			this.position = position;
 		}
 		catch (CellNotFoundException ex){}
 	}

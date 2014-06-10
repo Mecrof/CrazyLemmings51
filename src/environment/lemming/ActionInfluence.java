@@ -10,8 +10,8 @@ public class ActionInfluence implements Influence {
 	private final Agent<AgentBody> emitter;
 	private Action action;
 	
-	public ActionInfluence(Agent<AgentBody> emitter, Action action) {
-		this.emitter = emitter;
+	public ActionInfluence(Agent<?> emitter, Action action) {
+		this.emitter = (Agent<AgentBody>) emitter;
 		this.action = action;
 	}
 
