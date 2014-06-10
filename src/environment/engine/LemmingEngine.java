@@ -72,6 +72,7 @@ public class LemmingEngine implements Engine {
 			while(itLem.hasNext())
 			{
 				Lemming lemming = itLem.next();
+				lemming.setDigging(false);
 				Influence influence = lemming.getInfluence();
 				Reward reward;
 				if (influence instanceof ActionInfluence)

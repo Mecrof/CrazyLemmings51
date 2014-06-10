@@ -21,7 +21,7 @@ public class Main {
 		e.addListener(gui.WorldPanel());
 		engine.initialize();
 		gui.pack();
-		//gui.setVisible(true);
+		gui.setVisible(true);
 		System.out.println(e.toString());
 		engine.run();
 	}

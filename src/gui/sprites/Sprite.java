@@ -38,9 +38,9 @@ public class Sprite {
 					this.image.getGraphics().drawImage(tmp.getScaledInstance(WIDTH, HEIGHT, BufferedImage.SCALE_SMOOTH), 0, 0, null);
 					break;
 				case LEMMING:
-					tmp = ImageIO.read(this.getClass().getResource("../../img/ground.png"));
-					this.image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-					this.image.getGraphics().drawImage(tmp.getScaledInstance(WIDTH, HEIGHT, BufferedImage.SCALE_SMOOTH), 0, 0, null);
+					tmp = ImageIO.read(this.getClass().getResource("../../img/lemming.png"));
+					this.image = new BufferedImage(tmp.getWidth(), tmp.getHeight(), BufferedImage.TYPE_INT_RGB);
+					this.image.getGraphics().drawImage(tmp, 0, 0, null);
 					break;
 				case ROCK:
 					tmp = ImageIO.read(this.getClass().getResource("../../img/rock.png"));
@@ -64,7 +64,7 @@ public class Sprite {
 	
 	public void paint(Graphics g, Point p)
 	{
-		g.drawImage(this.image, p.x, p.y, null);
+		g.drawImage(this.image, p.x*10, p.y*10, null);
 	}
 	
 }
