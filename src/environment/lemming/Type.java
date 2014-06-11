@@ -1,7 +1,7 @@
 package environment.lemming;
 
 public enum Type {
-	EMTPY(0),
+	EMPTY(0),
 	FLOOR(2),
 	CLAY(1),
 	ROCK(3),
@@ -15,7 +15,7 @@ public enum Type {
 	{
 		switch(t)
 		{
-		case 0: return Type.EMTPY;
+		case 0: return Type.EMPTY;
 		case 2: return Type.FLOOR;
 		case 1: return Type.CLAY;
 		case 3: return Type.ROCK;
@@ -25,7 +25,7 @@ public enum Type {
 	}
 	public static char getLetter(Type t)
 	{
-		if (t == Type.EMTPY)
+		if (t == Type.EMPTY)
 			return 'E';
 		if (t == Type.FLOOR)
 			return 'F';
@@ -40,7 +40,7 @@ public enum Type {
 	
 	public static boolean isTraversable(Type t)
 	{
-		if (t == Type.EMTPY
+		if (t == Type.EMPTY
 				|| t == Type.FLOOR
 				|| t == Type.PORTAL)
 			return true;

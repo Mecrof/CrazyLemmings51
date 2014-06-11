@@ -16,7 +16,7 @@ public abstract class Environment<C extends Cell> {
 	protected int width;
 	protected int height;
 	protected LinkedList<C> cells;
-	private LinkedList<EnvironmentListener> listeners;
+	protected LinkedList<EnvironmentListener> listeners;
 	
 	public Environment(int w, int h)
 	{
@@ -94,12 +94,5 @@ public abstract class Environment<C extends Cell> {
 		return this.listeners.remove(listener);
 	}
 	
-	public void fireChange()
-	{
-		Iterator<EnvironmentListener> it = listeners.iterator();
-		while(it.hasNext())
-		{
-			it.next().onEnvironmentChanged(new EnvironmentEvent(new EnvironmentState<C>(this.cells)));
-		}
-	}
+	public abstract void fireChange();
 }

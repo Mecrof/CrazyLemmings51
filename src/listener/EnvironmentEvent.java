@@ -8,13 +8,13 @@ public class EnvironmentEvent extends EventObject {
 
 	private static final long serialVersionUID = 1L;
 
-	public EnvironmentEvent(EnvironmentState source)
+	public EnvironmentEvent(EnvironmentState<?> source)
 	{
 		super(source);
 	}
 	
-	public EnvironmentState getEnvironmentState() 
+	public EnvironmentState<?> getEnvironmentState() 
 	{
-		return (EnvironmentState) this.getSource();
+		return (EnvironmentState<?>) this.getSource();
 	}
 }

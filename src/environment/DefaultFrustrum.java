@@ -74,7 +74,7 @@ public class DefaultFrustrum implements Sensor<TypeCell> {
 				// gets type of the cell
 				type = cell.getType();
 				// if it is still an empty, let's check if it may be a floor
-				if (type == Type.EMTPY)
+				if (type == Type.EMPTY)
 				{
 					try {
 						TypeCell bottomCell = this.environment.getCellAt(cellPosition.x, cellPosition.y+1);

@@ -3,7 +3,10 @@ package environment.lemming;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import listener.EnvironmentEvent;
+import listener.EnvironmentListener;
 import environment.Environment;
+import environment.EnvironmentState;
 import environment.WorldObject;
 import environment.exceptions.CellNotFoundException;
 import gui.sprites.Sprite;
@@ -52,7 +55,7 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 			for(int j = 0; j < this.width; ++j)
 			{
 				TypeCell c = this.cells.get(this.getPosition(j, i));
-				if (c.getType() == Type.EMTPY)
+				if (c.getType() == Type.EMPTY)
 				{
 					try {
 						if (!Type.isTraversable(this.getCellAt(j, i+1).getType()))
@@ -115,6 +118,16 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 	public void addNewDeadOne()
 	{
 		this.deads++;
+	}
+
+	@Override
+	public void fireChange() 
+	{
+		Iterator<EnvironmentListener> it = this.listeners.iterator();
+		while(it.hasNext())
+		{
+			it.next().onEnvironmentChanged(new EnvironmentEvent(new EnvironmentState<TypeCell>(this.cells, this.deads)));
+		}
 	}
 
 }

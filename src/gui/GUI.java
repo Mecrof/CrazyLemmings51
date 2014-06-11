@@ -3,12 +3,14 @@ package gui;
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 
 import environment.engine.LemmingEngine;
 
-public class GUI extends JFrame implements ComponentListener {
+public class GUI extends JFrame implements ComponentListener, WindowListener {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -26,6 +28,7 @@ public class GUI extends JFrame implements ComponentListener {
 		this.add(this.mainPanel);
 		
 		this.addComponentListener(this);
+		this.addWindowListener(this);
 	}
 
 	public World WorldPanel() 
@@ -33,7 +36,8 @@ public class GUI extends JFrame implements ComponentListener {
 		return this.mainPanel;
 	}
 
-	public void setMouseListener(MouseListener mouseListener) {
+	public void setMouseListener(MouseListener mouseListener)
+	{
 		this.mainPanel.addMouseListener(mouseListener);
 		this.mainPanel.addMouseMotionListener(mouseListener);
 	}
@@ -41,15 +45,10 @@ public class GUI extends JFrame implements ComponentListener {
 	@Override
 	public void componentResized(ComponentEvent arg0) 
 	{
-		LemmingEngine.LOCK.setLocked(true);
-		
 		RATIO_X = (int) ((this.getWidth() - 16) / 80.0f);
 		RATIO_Y = (int) ((this.getHeight() - 39) / 60.0f);
 		
 		this.mainPanel.updateSprites();
-		
-		LemmingEngine.LOCK.setLocked(false);
-		LemmingEngine.LOCK.notifyUnlocked();
 	}
 	
 	@Override
@@ -65,5 +64,42 @@ public class GUI extends JFrame implements ComponentListener {
 	@Override
 	public void componentShown(ComponentEvent arg0) 
 	{		
+	}
+
+	@Override
+	public void windowActivated(WindowEvent arg0) 
+	{
+	}
+
+	@Override
+	public void windowClosed(WindowEvent arg0) 
+	{
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent arg0)
+	{
+		LemmingEngine.exit();
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent arg0)
+	{
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent arg0) 
+	{
+	}
+
+	@Override
+	public void windowIconified(WindowEvent arg0) 
+	{
+	}
+
+	@Override
+	public void windowOpened(WindowEvent arg0) 
+	{
 	}
 }

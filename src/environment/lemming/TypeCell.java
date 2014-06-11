@@ -9,13 +9,13 @@ public class TypeCell extends Cell {
 	public TypeCell() 
 	{
 		super();
-		type = Type.EMTPY;
+		type = Type.EMPTY;
 	}
 	
 	public TypeCell(int x, int y)
 	{
 		super(x,y);
-		this.type = Type.EMTPY;
+		this.type = Type.EMPTY;
 	}
 	
 	public TypeCell(int x, int y, Type type)

@@ -20,11 +20,11 @@ import environment.lemming.TypeCell;
 
 public class LemmingEngine implements Engine {
 	
-	public static final Lock LOCK = new Lock();
+	private final Lock LOCK = new Lock();
 	
 	private final int HIGH_TO_DIE = 7;
 	
-	private boolean ended;
+	private static boolean ended;
 	
 	private int timePerFrame;
 	private LemmingEnvironment environment;
@@ -54,7 +54,8 @@ public class LemmingEngine implements Engine {
 			}
 			lemmings.add(body);
 		}
-		this.ended = false;
+		
+		ended = false;
 	}
 
 	@Override
@@ -135,7 +136,7 @@ public class LemmingEngine implements Engine {
 			Type targetType = targetCell.getType();
 			if (targetType == Type.CLAY)
 			{
-				targetCell.setType(Type.EMTPY);
+				targetCell.setType(Type.EMPTY);
 				routineForNewPosition(targetCell, lemming);
 			}
 		} catch (CellNotFoundException e) // the agent tries to go outside of the environment
@@ -153,7 +154,7 @@ public class LemmingEngine implements Engine {
 			{
 				reward = new Reward(Reward.VERY_BAD_ACTION); // very bad because too stupid by walking against a wall...
 			}
-			else if (targetType == Type.EMTPY)
+			else if (targetType == Type.EMPTY)
 			{
 				routineForNewPosition(targetCell, lemming);
 			}
@@ -169,7 +170,7 @@ public class LemmingEngine implements Engine {
 		Point currentPosition = lemming.getPosition();
 		try{
 			TypeCell bottomTargetCell = environment.getCellAt(targetCell.getPosition().x, targetCell.getPosition().y+1);
-			if (bottomTargetCell.getType() == Type.EMTPY)
+			if (bottomTargetCell.getType() == Type.EMPTY)
 			{
 				if(this.goDown(targetCell, lemming))
 				{
@@ -249,7 +250,7 @@ public class LemmingEngine implements Engine {
 		TypeCell tmpCell = from;
 		int high = 0;
 		try{
-		while (tmpCell.getType() == Type.EMTPY)
+		while (tmpCell.getType() == Type.EMPTY)
 		{
 			high++;
 			tmpCell = environment.getCellAt(tmpCell.getPosition().x, tmpCell.getPosition().y+1);
@@ -275,5 +276,14 @@ public class LemmingEngine implements Engine {
 		}
 		return false;
 	}
+	
+	public Lock getLock()
+	{
+		return this.LOCK;
+	}
 
+	public static void exit()
+	{
+		ended = true;
+	}
 }

@@ -66,7 +66,7 @@ public class World extends JPanel implements EnvironmentListener {
 					p = cell.getPosition();
 					try
 					{
-						if(cells.get(GUI.WIDTH/10*(p.y-1)+p.x).getType() == Type.EMTPY)
+						if(cells.get(GUI.WIDTH/10*(p.y-1)+p.x).getType() == Type.EMPTY)
 							this.groundUp.paint(g, cell.getPosition());
 						else
 							this.ground.paint(g, cell.getPosition());
@@ -79,7 +79,7 @@ public class World extends JPanel implements EnvironmentListener {
 				case ROCK:
 					this.rock.paint(g, cell.getPosition());
 					break;
-				case EMTPY:
+				case EMPTY:
 					iterator = cell.getIterator();
 					
 					if(!iterator.hasNext())
@@ -120,13 +120,18 @@ public class World extends JPanel implements EnvironmentListener {
 		{
 			this.exit.paint(g, portalPosition);
 		}
+		
+		g.setColor(Color.WHITE);
+		g.drawString("Morts : " + this.state.getDeadNubmer(), 5, 15);
+		
+		g.setColor(Color.BLACK);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onEnvironmentChanged(EnvironmentEvent event)
 	{
-		this.state = event.getEnvironmentState();
+		this.state = (EnvironmentState<TypeCell>) event.getEnvironmentState();
 		this.repaint();
 	}
 

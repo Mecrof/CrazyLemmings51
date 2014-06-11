@@ -1,10 +1,8 @@
 import qlearning.RandomLemmingAgent;
 import environment.DefaultFrustrum;
 import environment.engine.LemmingEngine;
-import environment.exceptions.CellNotFoundException;
 import environment.lemming.LemmingEnvironment;
 import environment.lemming.Portal;
-import environment.lemming.TypeCell;
 import gui.GUI;
 import gui.MouseListener;
 
@@ -42,7 +40,7 @@ public class Main {
 		}
 		//*/
 		GUI gui = new GUI();
-		gui.setMouseListener(new MouseListener(e));
+		gui.setMouseListener(new MouseListener(e, engine.getLock()));
 		e.addListener(gui.WorldPanel());
 		engine.initialize();
 		gui.pack();

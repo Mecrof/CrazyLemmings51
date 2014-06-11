@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -8,7 +9,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.SwingUtilities;
 
-import environment.engine.LemmingEngine;
+import environment.engine.Lock;
 import environment.exceptions.CellNotFoundException;
 import environment.lemming.LemmingEnvironment;
 import environment.lemming.Type;
@@ -18,17 +19,20 @@ public class MouseListener extends MouseAdapter {
 
 	private LemmingEnvironment environment;
 	private Point oldPosition;
+	private final Lock LOCK;
 	
-	public MouseListener(LemmingEnvironment e)
+	public MouseListener(LemmingEnvironment e, Lock lock)
 	{
 		this.environment = e;
 		this.oldPosition = new Point();
+		
+		this.LOCK = lock;
 	}
 	
 	@Override
 	public void mouseMoved(MouseEvent e) 
 	{
-		if(!LemmingEngine.LOCK.isLocked())
+		if(!this.LOCK.isLocked())
 			return;
 		
 		World world = (World) e.getSource();
@@ -64,12 +68,19 @@ public class MouseListener extends MouseAdapter {
 	{
 		if(SwingUtilities.isRightMouseButton(e))
 		{
-			LemmingEngine.LOCK.setLocked(!LemmingEngine.LOCK.isLocked());
-			if(!LemmingEngine.LOCK.isLocked())
-				LemmingEngine.LOCK.notifyUnlocked();
+			this.LOCK.setLocked(!this.LOCK.isLocked());
+			
+			if(!this.LOCK.isLocked())
+			{
+				((World) e.getSource()).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+				this.LOCK.notifyUnlocked();
+			}
+			else
+				((World) e.getSource()).setCursor(new Cursor(Cursor.HAND_CURSOR));
+			
 			return;
 		}
-		else if((SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isMiddleMouseButton(e)) && !LemmingEngine.LOCK.isLocked())
+		else if((SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isMiddleMouseButton(e)) && !this.LOCK.isLocked())
 			return;
 		
 		World world = (World) e.getSource();
@@ -89,13 +100,13 @@ public class MouseListener extends MouseAdapter {
 			return;
 		}
 		
-		if(cell.getType() == Type.EMTPY && !cell.getIterator().hasNext() && SwingUtilities.isLeftMouseButton(e))
+		if(cell.getType() == Type.EMPTY && !cell.getIterator().hasNext() && SwingUtilities.isLeftMouseButton(e))
 		{
 			cell.setType(Type.ROCK);
 		}
-		else if(cell.getType() != Type.EMTPY && SwingUtilities.isMiddleMouseButton(e))
+		else if(cell.getType() != Type.EMPTY && SwingUtilities.isMiddleMouseButton(e))
 		{
-			cell.setType(Type.EMTPY);
+			cell.setType(Type.EMPTY);
 		}
 		
 		world.repaint();
