@@ -1,14 +1,17 @@
 package environment;
 
 import java.awt.Point;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import environment.exceptions.CellNotFoundException;
+import environment.lemming.LemmingEnvironment;
+import environment.lemming.PerceivedType;
 import environment.lemming.Type;
 import environment.lemming.TypeCell;
 
-public class DefaultFrustrum<C extends Cell> implements Sensor<C> {
+public class DefaultFrustrum implements Sensor<TypeCell> {
 
 	/*------------------------
 	    DEFAULT FRUSTRUM
@@ -25,21 +28,20 @@ public class DefaultFrustrum<C extends Cell> implements Sensor<C> {
 	x = currentPosition
 	
 	--------------------------*/
-	Environment<C> environment;
+	LemmingEnvironment environment;
 	
-	public DefaultFrustrum(Environment<C> e) {
+	public DefaultFrustrum(LemmingEnvironment e) {
 		this.environment = e;
 	}
 
-	@Override
-	public List<C> getPerceivedCells(Cell currentCell) {
-		LinkedList<C> cells = new LinkedList<C>();
+	public List<TypeCell> getPerceivedCells(TypeCell currentCell) {
+		LinkedList<TypeCell> cells = new LinkedList<TypeCell>();
 		Point currentPosition = currentCell.getPosition();
 		
 		// adding cell at the left
 		cells.add(this.getCellAt(currentPosition.x-1, currentPosition.y));
 		// adding currentCell
-		cells.add((C) currentCell);
+		cells.add(currentCell);
 		// adding cell at the right
 		cells.add(this.getCellAt(currentPosition.x+1, currentPosition.y));
 		// adding cell at the bottom
@@ -50,16 +52,68 @@ public class DefaultFrustrum<C extends Cell> implements Sensor<C> {
 		return cells;
 	}
 	
-	private C getCellAt(int x, int y)
+	@Override
+	public List<Perceivable> getPerception(WorldObject ob) {
+		LinkedList<Perceivable> perceivedObjects = new LinkedList<Perceivable>();
+
+		TypeCell currentCell;
+		try {
+			currentCell = (TypeCell) ob.getCurrentCell(this.environment);
+			
+			// gets cells perceived by the body, if currentCell is out of borders, CellNotFound is thrown
+			List<TypeCell> cells = this.getPerceivedCells(currentCell);
+			// goes through the perceived cells
+			Iterator<TypeCell> itCells = cells.iterator();
+			while(itCells.hasNext())
+			{
+				TypeCell cell = itCells.next();
+				
+				Type type;
+				Point cellPosition = cell.getPosition();
+				
+				// gets type of the cell
+				type = cell.getType();
+				// if it is still an empty, let's check if it may be a floor
+				if (type == Type.EMTPY)
+				{
+					try {
+						TypeCell bottomCell = this.environment.getCellAt(cellPosition.x, cellPosition.y+1);
+						if (!Type.isTraversable( bottomCell.getType() ) )
+						{
+							type = Type.FLOOR;
+						}
+					} catch (CellNotFoundException e) { // we are at the bottom of the world
+						type = Type.FLOOR;
+					}
+				}
+				Point portalPosition = ((LemmingEnvironment)this.environment).getPortal().getPosition();
+				PerceivedType perceivedType = new PerceivedType(cellPosition.x,
+																cellPosition.y, 
+																cellPosition.x-currentCell.getPosition().x,
+																cellPosition.y-currentCell.getPosition().y,
+																portalPosition.x-currentCell.getPosition().x,
+																portalPosition.y-currentCell.getPosition().y,
+																type
+																);
+				perceivedObjects.add(perceivedType);
+			}
+		} catch (CellNotFoundException e1) {
+			e1.printStackTrace();
+		}
+	
+		return perceivedObjects;
+	}
+	
+	private TypeCell getCellAt(int x, int y)
 	{
 		try {
 			return this.environment.getCellAt(x, y);
 		} catch (CellNotFoundException e) {
-			return (C) new TypeCell(x, y, Type.ROCK);
+			return new TypeCell(x, y, Type.ROCK);
 		}
 	}
 
-	public Environment<C> getEnvironment() {
+	public Environment<TypeCell> getEnvironment() {
 		return environment;
 	}
 

@@ -8,8 +8,6 @@ public interface Perceivable {
 	
 	public Point getPosition();
 	
-	public Type getType();
-	
-	public boolean isType(Type t);
+	public Point getDelta();
 
 }

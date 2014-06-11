@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import qlearning.Action;
 import qlearning.Agent;
+import qlearning.LemmingAgent;
 import environment.Environment;
 import environment.Influence;
 import environment.Reward;
@@ -19,26 +20,28 @@ import environment.lemming.TypeCell;
 
 public class LemmingEngine implements Engine {
 	
+	public static final Lock LOCK = new Lock();
+	
 	private final int HIGH_TO_DIE = 7;
+	
+	private boolean ended;
 	
 	private int timePerFrame;
 	private LemmingEnvironment environment;
 	private LinkedList<Lemming> lemmings;
-	private LinkedList<Agent<Lemming>> agents;
-	private boolean ended;
-	public static final Lock LOCK = new Lock();
+	private LinkedList<LemmingAgent> agents;	
 	
 	public LemmingEngine(LemmingEnvironment e, int tpf) {
 		this.environment = e;
 		this.timePerFrame = tpf;
 		lemmings = new LinkedList<Lemming>();
-		agents = new LinkedList<Agent<Lemming>>();
+		agents = new LinkedList<LemmingAgent>();
 		
 	}
 
 	@Override
 	public void initialize() {
-		Iterator<Agent<Lemming>> it = agents.iterator();
+		Iterator<LemmingAgent> it = agents.iterator();
 		lemmings = new LinkedList<Lemming>();
 		while(it.hasNext())
 		{
@@ -66,10 +69,18 @@ public class LemmingEngine implements Engine {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			Iterator<Agent<Lemming>> it = agents.iterator();
+			Iterator<LemmingAgent> it = agents.iterator();
 			while(it.hasNext())
 			{
-				it.next().live();
+				LemmingAgent ag = it.next();
+				if (ag.isKilled())
+				{
+					// TODO
+				}
+				else
+				{
+					ag.live();
+				}
 			}
 			Iterator<Lemming> itLem = lemmings.iterator();
 			while(itLem.hasNext())
@@ -249,12 +260,13 @@ public class LemmingEngine implements Engine {
 		if ( high > this.HIGH_TO_DIE )
 		{
 			lemming.setDead(true);
+			this.environment.addNewDeadOne();
 			return false;
 		}
 		return true;
 	}
-	
-	public boolean enableAgent(Agent<Lemming> ag)
+
+	public boolean enableAgent(LemmingAgent ag)
 	{
 		if (agents.add(ag))
 		{

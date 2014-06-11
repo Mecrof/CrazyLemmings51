@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface Sensor<C extends Cell> {
 	
-	public List<C> getPerceivedCells(C currentCell);
+	public List<Perceivable> getPerception(WorldObject ob);
 	
 	public Environment<C> getEnvironment();
 

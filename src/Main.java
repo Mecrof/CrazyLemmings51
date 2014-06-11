@@ -16,9 +16,9 @@ public class Main {
 		Portal portal = new Portal(70,52,true);
 		e.setPortal(portal);
 		
-		LemmingEngine engine = new LemmingEngine(e, 1000);
-		//*
-		RandomLemmingAgent lemming2 = new RandomLemmingAgent(15, 50, new DefaultFrustrum<TypeCell>(e));
+		LemmingEngine engine = new LemmingEngine(e, 250);
+		/*
+		RandomLemmingAgent lemming2 = new RandomLemmingAgent(15, 50, new DefaultFrustrum(e));
 		engine.enableAgent(lemming2);
 		//*/
 		/*
@@ -31,7 +31,7 @@ public class Main {
 		engine.enableAgent(lemming3);
 		engine.enableAgent(lemming4);
 		//*/
-		/*
+		//*
 		RandomLemmingAgent lemming;
 		for (int i = 0; i < 20; i++)
 		{

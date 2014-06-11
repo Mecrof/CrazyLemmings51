@@ -11,10 +11,12 @@ import gui.sprites.Sprite;
 public class LemmingEnvironment extends Environment<TypeCell> {
 
 	private Portal portal;
+	private int deads;
 	
 	public LemmingEnvironment(int w, int h) {
 		super(w, h);
 		this.portal = null;
+		this.deads = 0;
 	}
 
 	@Override
@@ -104,6 +106,15 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 
 	public final Portal getPortal() {
 		return portal;
+	}
+
+	public int getDeads() {
+		return deads;
+	}
+	
+	public void addNewDeadOne()
+	{
+		this.deads++;
 	}
 
 }
