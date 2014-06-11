@@ -72,7 +72,14 @@ public class DefaultFrustrum implements Sensor<TypeCell> {
 				Point cellPosition = cell.getPosition();
 				
 				// gets type of the cell
-				type = cell.getType();
+				if (cell.containsPortal())
+				{
+					type = Type.PORTAL;
+				}
+				else
+				{
+					type = cell.getType();
+				}
 				// if it is still an empty, let's check if it may be a floor
 				if (type == Type.EMPTY)
 				{
@@ -91,8 +98,8 @@ public class DefaultFrustrum implements Sensor<TypeCell> {
 																cellPosition.y, 
 																cellPosition.x-currentCell.getPosition().x,
 																cellPosition.y-currentCell.getPosition().y,
-																portalPosition.x-currentCell.getPosition().x,
-																portalPosition.y-currentCell.getPosition().y,
+																portalPosition.x-cellPosition.x,
+																portalPosition.y-cellPosition.y,
 																type
 																);
 				perceivedObjects.add(perceivedType);

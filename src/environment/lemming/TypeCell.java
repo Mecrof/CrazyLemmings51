@@ -1,6 +1,9 @@
 package environment.lemming;
 
+import java.util.Iterator;
+
 import environment.Cell;
+import environment.WorldObject;
 
 public class TypeCell extends Cell {
 	
@@ -32,5 +35,15 @@ public class TypeCell extends Cell {
 		this.type = type;
 	}
 
+	public boolean containsPortal()
+	{
+		Iterator<WorldObject> it = this.getIterator();
+		while (it.hasNext())
+		{
+			if (it.next() instanceof Portal)
+				return true;
+		}
+		return false;
+	}
 
 }

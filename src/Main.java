@@ -11,12 +11,12 @@ public class Main {
 	public static void main(String[] args) {
 		
 		LemmingEnvironment e = new LemmingEnvironment(80, 60);
-		Portal portal = new Portal(70,52,true);
+		Portal portal = new Portal(77,58,true);
 		e.setPortal(portal);
 		
-		LemmingEngine engine = new LemmingEngine(e, 250);
-		/*
-		RandomLemmingAgent lemming2 = new RandomLemmingAgent(15, 50, new DefaultFrustrum(e));
+		LemmingEngine engine = new LemmingEngine(e, 500);
+		//*
+		RandomLemmingAgent lemming2 = new RandomLemmingAgent("Lemming2",77, 52, new DefaultFrustrum(e));
 		engine.enableAgent(lemming2);
 		//*/
 		/*
@@ -29,13 +29,13 @@ public class Main {
 		engine.enableAgent(lemming3);
 		engine.enableAgent(lemming4);
 		//*/
-		//*
+		/*
 		RandomLemmingAgent lemming;
-		for (int i = 0; i < 20; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			int x = (int)(Math.random()*80.0);
 			int y = (int)(Math.random()*60.0);
-			lemming = new RandomLemmingAgent(x, y, new DefaultFrustrum(e));
+			lemming = new RandomLemmingAgent("Lemming"+i,x, y, new DefaultFrustrum(e));
 			engine.enableAgent(lemming);
 		}
 		//*/

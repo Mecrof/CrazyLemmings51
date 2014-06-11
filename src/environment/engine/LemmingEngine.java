@@ -5,9 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import qlearning.Action;
-import qlearning.Agent;
 import qlearning.LemmingAgent;
-import environment.Environment;
 import environment.Influence;
 import environment.Reward;
 import environment.WorldObject;
@@ -15,10 +13,21 @@ import environment.exceptions.CellNotFoundException;
 import environment.lemming.ActionInfluence;
 import environment.lemming.Lemming;
 import environment.lemming.LemmingEnvironment;
+import environment.lemming.Portal;
 import environment.lemming.Type;
 import environment.lemming.TypeCell;
 
 public class LemmingEngine implements Engine {
+	
+	// rewards
+	private final Reward r_Dig_In_Rock = new Reward(		Reward.VERY_BAD_ACTION);
+	private final Reward r_Dig_In_Air = new Reward(			Reward.VERY_BAD_ACTION);
+	private final Reward r_Walk_In_Solid_Type = new Reward(	Reward.VERY_BAD_ACTION);
+	private final Reward r_Go_Down_And_Die = new Reward(	Reward.VERY_BAD_ACTION);
+	private final Reward r_Closer_To_Portal = new Reward(	Reward.GOOD_ACTION);
+	private final Reward r_Further_To_Portal = new Reward(	Reward.BAD_ACTION);
+	private final Reward r_Stay = new Reward(				Reward.NOTHING_HAPPENED);
+	private final Reward r_Reached_Portal = new Reward(		Reward.VERY_GOOD_ACTION);
 	
 	private final Lock LOCK = new Lock();
 	
@@ -59,7 +68,7 @@ public class LemmingEngine implements Engine {
 	}
 
 	@Override
-	public void run() {
+	synchronized public void run() {
 		while(!ended)
 		{
 			if(LOCK.isLocked())
@@ -76,7 +85,14 @@ public class LemmingEngine implements Engine {
 				LemmingAgent ag = it.next();
 				if (ag.isKilled())
 				{
-					// TODO
+					int index = agents.indexOf(ag);
+					it.remove();
+					Lemming lem = lemmings.remove(index);
+					try {
+						environment.detachWorldObject(lem);
+					} catch (CellNotFoundException e) {
+						e.printStackTrace();
+					}
 				}
 				else
 				{
@@ -121,7 +137,7 @@ public class LemmingEngine implements Engine {
 			case DIG_BELOW:
 				return dig(lemming, Action.DIG_BELOW);
 			default:
-				return new Reward(Reward.NOTHING_HAPPENED);
+				return r_Stay;
 			}
 		}
 		return new Reward(Reward.NOTHING_HAPPENED);
@@ -130,14 +146,18 @@ public class LemmingEngine implements Engine {
 	private Reward dig(Lemming lemming, Action action)
 	{
 		lemming.setDigging(true);
-		Reward reward = new Reward(Reward.VERY_BAD_ACTION);
+		Reward reward = r_Dig_In_Rock;
 		try {
 			TypeCell targetCell = this.getTargetCell(lemming, action);
 			Type targetType = targetCell.getType();
 			if (targetType == Type.CLAY)
 			{
 				targetCell.setType(Type.EMPTY);
-				routineForNewPosition(targetCell, lemming);
+				return routineForNewPosition(targetCell, lemming);
+			}
+			else if(targetType == Type.EMPTY)
+			{
+				return r_Dig_In_Air;
 			}
 		} catch (CellNotFoundException e) // the agent tries to go outside of the environment
 		{}
@@ -146,17 +166,17 @@ public class LemmingEngine implements Engine {
 	
 	private Reward walk(Lemming lemming, Action action)
 	{
-		Reward reward = new Reward(Reward.VERY_BAD_ACTION);
+		Reward reward = r_Dig_In_Rock;
 		try{
 			TypeCell targetCell = this.getTargetCell(lemming, action);
 			Type targetType = targetCell.getType();
 			if (targetType == Type.CLAY || targetType == Type.ROCK)
 			{
-				reward = new Reward(Reward.VERY_BAD_ACTION); // very bad because too stupid by walking against a wall...
+				reward = r_Walk_In_Solid_Type; // very bad because too stupid by walking against a wall...
 			}
 			else if (targetType == Type.EMPTY)
 			{
-				routineForNewPosition(targetCell, lemming);
+				return routineForNewPosition(targetCell, lemming);
 			}
 		}
 		catch (CellNotFoundException ex) // the agent tries to go outside of the environment
@@ -166,7 +186,7 @@ public class LemmingEngine implements Engine {
 	
 	private Reward routineForNewPosition(TypeCell targetCell, Lemming lemming)
 	{
-		Reward reward = new Reward(Reward.VERY_BAD_ACTION);
+		Reward reward = r_Go_Down_And_Die;
 		Point currentPosition = lemming.getPosition();
 		try{
 			TypeCell bottomTargetCell = environment.getCellAt(targetCell.getPosition().x, targetCell.getPosition().y+1);
@@ -174,27 +194,49 @@ public class LemmingEngine implements Engine {
 			{
 				if(this.goDown(targetCell, lemming))
 				{
-					if (isCloserToPortal(currentPosition, lemming.getPosition()))
-						reward = new Reward(Reward.GOOD_ACTION);
+					TypeCell newCell = environment.getCellAt(lemming.getPosition());
+					if (newCell.containsPortal())
+					{
+						return r_Reached_Portal;
+					}
 					else
-						reward = new Reward(Reward.BAD_ACTION);
+					{
+						if (isCloserToPortal(currentPosition, lemming.getPosition()))
+							return r_Closer_To_Portal;
+						else
+							return r_Further_To_Portal;
+					}
 				}
 			}
 			else
 			{
-				if (isCloserToPortal(currentPosition, targetCell.getPosition()))
-					reward = new Reward(Reward.GOOD_ACTION);
-				else
-					reward = new Reward(Reward.BAD_ACTION);
 				lemming.setPosition(environment, targetCell.getPosition());
+				if(targetCell.containsPortal())
+				{
+					return r_Reached_Portal;
+				}
+				else
+				{
+					if (isCloserToPortal(currentPosition, targetCell.getPosition()))
+						return r_Closer_To_Portal;
+					else
+						return r_Further_To_Portal;
+				}
 			}
 		}catch(CellNotFoundException ex)
 		{
-			if (isCloserToPortal(currentPosition, targetCell.getPosition()))
-				reward = new Reward(Reward.GOOD_ACTION);
-			else
-				reward = new Reward(Reward.BAD_ACTION);
 			lemming.setPosition(environment, targetCell.getPosition());
+			if(targetCell.containsPortal())
+			{
+				return r_Reached_Portal;
+			}
+			else
+			{
+				if (isCloserToPortal(currentPosition, targetCell.getPosition()))
+					return r_Closer_To_Portal;
+				else
+					return r_Further_To_Portal;
+			}
 		}
 		return reward;
 	}
