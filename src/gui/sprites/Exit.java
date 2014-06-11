@@ -1,11 +1,16 @@
 package gui.sprites;
 
+import gui.GUI;
+
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 
 public class Exit extends Sprite {
 
 	private Point position;
+	private Image scaledImage;
 	
 	public Exit() 
 	{
@@ -23,7 +28,13 @@ public class Exit extends Sprite {
 			this.position.y = p.y - 1;
 		}
 		
-		super.paint(g, this.position);
+		g.drawImage(this.scaledImage, (int) (this.position.x*GUI.RATIO_X), (int) (this.position.y*GUI.RATIO_Y), null);
+	}
+
+	@Override
+	public void updateSprite()
+	{
+		this.scaledImage = this.image.getScaledInstance((int) (GUI.RATIO_X + GUI.RATIO_X * 2), (int) (GUI.RATIO_Y + GUI.RATIO_Y), BufferedImage.SCALE_SMOOTH);
 	}
 	
 }

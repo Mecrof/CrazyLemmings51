@@ -1,4 +1,5 @@
 package gui.sprites;
+
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -7,7 +8,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 
-public class Sprite {
+public abstract class Sprite {
 
 	public static final int WIDTH = 10;
 	public static final int HEIGHT = 10;
@@ -62,9 +63,7 @@ public class Sprite {
 		}
 	}
 	
-	public void paint(Graphics g, Point p)
-	{
-		g.drawImage(this.image, p.x*10, p.y*10, null);
-	}
+	public abstract void paint(Graphics g, Point p);
 	
+	public abstract void updateSprite();
 }

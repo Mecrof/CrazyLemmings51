@@ -8,10 +8,8 @@ import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
-import environment.Cell;
 import environment.EnvironmentState;
 import environment.WorldObject;
-import environment.exceptions.CellNotFoundException;
 import environment.lemming.Lemming;
 import environment.lemming.Portal;
 import environment.lemming.Type;
@@ -23,7 +21,6 @@ import gui.sprites.Ground;
 import gui.sprites.GroundUp;
 import gui.sprites.Lemmings;
 import gui.sprites.Rock;
-import gui.sprites.Start;
 
 public class World extends JPanel implements EnvironmentListener {
 
@@ -131,5 +128,14 @@ public class World extends JPanel implements EnvironmentListener {
 	{
 		this.state = event.getEnvironmentState();
 		this.repaint();
+	}
+
+	public void updateSprites() 
+	{
+		this.lemming.updateSprite();
+		this.rock.updateSprite();
+		this.ground.updateSprite();
+		this.groundUp.updateSprite();
+		this.exit.updateSprite();
 	}
 }

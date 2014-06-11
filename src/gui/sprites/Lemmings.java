@@ -1,6 +1,9 @@
 package gui.sprites;
 
+import gui.GUI;
+
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
@@ -12,6 +15,12 @@ public class Lemmings extends Sprite {
 	private BufferedImage digLeft;
 	private BufferedImage digRight;
 	private BufferedImage dead;
+	
+	private Image leftScaled;
+	private Image rightScaled;
+	private Image digLeftScaled;
+	private Image digRightScaled;
+	private Image deadScaled;
 	
 	public Lemmings() 
 	{
@@ -30,32 +39,49 @@ public class Lemmings extends Sprite {
 		this.digLeft.getGraphics().drawImage(this.image, 0, 0, 10, 10, 16, 301, 26, 313, null);
 		
 		this.dead = new BufferedImage(Sprite.WIDTH, Sprite.HEIGHT, BufferedImage.TYPE_INT_RGB);
-		this.dead.getGraphics().drawImage(this.image, 0, 0, 10, 10, 69, 173, 76, 180, null);
+		this.dead.getGraphics().drawImage(this.image, 0, 0, 10, 10, 69, 172, 76, 178, null);
+		
+		this.updateSprite();
 	}
 
 	public void paintRight(Graphics g, Point p) 
 	{
-		g.drawImage(this.right, p.x*10, p.y*10, null);
+		g.drawImage(this.rightScaled, (int) (p.x*GUI.RATIO_X), (int) (p.y*GUI.RATIO_Y), null);
 	}
 
 	public void paintLeft(Graphics g, Point p) 
 	{
-		g.drawImage(this.left, p.x*10, p.y*10, null);
+		g.drawImage(this.leftScaled, (int) (p.x*GUI.RATIO_X), (int) (p.y*GUI.RATIO_Y), null);
 	}
 
 	public void paintDead(Graphics g, Point p) 
 	{
-		g.drawImage(this.dead, p.x*10, p.y*10, null);
+		g.drawImage(this.deadScaled, (int) (p.x*GUI.RATIO_X), (int) (p.y*GUI.RATIO_Y), null);
 	}
 
 	public void paintDigRight(Graphics g, Point p) 
 	{
-		g.drawImage(this.digRight, p.x*10, p.y*10, null);
+		g.drawImage(this.digRightScaled, (int) (p.x*GUI.RATIO_X), (int) (p.y*GUI.RATIO_Y), null);
 	}
 	
 	public void paintDigLeft(Graphics g, Point p) 
 	{
-		g.drawImage(this.digLeft, p.x*10, p.y*10, null);
+		g.drawImage(this.digLeftScaled, (int) (p.x*GUI.RATIO_X), (int) (p.y*GUI.RATIO_Y), null);
+	}
+	
+	@Override
+	public void paint(Graphics g, Point p)
+	{
+	}
+
+	@Override
+	public void updateSprite() 
+	{
+		this.leftScaled = this.left.getScaledInstance((int) GUI.RATIO_X, (int) GUI.RATIO_Y, BufferedImage.SCALE_SMOOTH);
+		this.rightScaled = this.right.getScaledInstance((int) GUI.RATIO_X, (int) GUI.RATIO_Y, BufferedImage.SCALE_SMOOTH);
+		this.digLeftScaled = this.digLeft.getScaledInstance((int) GUI.RATIO_X, (int) GUI.RATIO_Y, BufferedImage.SCALE_SMOOTH);
+		this.digRightScaled = this.digRight.getScaledInstance((int) GUI.RATIO_X, (int) GUI.RATIO_Y, BufferedImage.SCALE_SMOOTH);
+		this.deadScaled = this.dead.getScaledInstance((int) GUI.RATIO_X, (int) GUI.RATIO_Y, BufferedImage.SCALE_SMOOTH);
 	}
 
 }

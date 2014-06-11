@@ -26,7 +26,7 @@ public class LemmingEngine implements Engine {
 	private LinkedList<Lemming> lemmings;
 	private LinkedList<Agent<Lemming>> agents;
 	private boolean ended;
-	
+	public static final Lock LOCK = new Lock();
 	
 	public LemmingEngine(LemmingEnvironment e, int tpf) {
 		this.environment = e;
@@ -58,6 +58,9 @@ public class LemmingEngine implements Engine {
 	public void run() {
 		while(!ended)
 		{
+			if(LOCK.isLocked())
+				LOCK.waitLock();
+				
 			try {
 				Thread.sleep(timePerFrame);
 			} catch (InterruptedException e) {

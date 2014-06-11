@@ -6,6 +6,7 @@ import environment.lemming.LemmingEnvironment;
 import environment.lemming.Portal;
 import environment.lemming.TypeCell;
 import gui.GUI;
+import gui.MouseListener;
 
 public class Main {
 
@@ -41,6 +42,7 @@ public class Main {
 		}
 		//*/
 		GUI gui = new GUI();
+		gui.setMouseListener(new MouseListener(e));
 		e.addListener(gui.WorldPanel());
 		engine.initialize();
 		gui.pack();
