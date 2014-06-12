@@ -1,5 +1,6 @@
 package qlearning;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -89,7 +90,7 @@ public class QLearning {
 		//this.qValues.put(state, m);
 		float q = state.getRewards(action.id);
 		
-		q = (1 - learningRate)*state.getRewards(action.id) + learningRate*((float)feedbackValue + discountFactor*(state.getRewards(getBestAction(nextState).id)) - state.getRewards(action.id));
+		q = (1 - learningRate)*state.getRewards(action.id) + learningRate*((float)feedbackValue + discountFactor/*(state.getRewards(getBestAction(nextState).id)) */- state.getRewards(action.id));
 		//float q = getQ(state,action);
 		
 		//q = getQ(state, action) + learningRate*((float)feedbackValue + discountFactor - getQ(state, action));
@@ -98,7 +99,7 @@ public class QLearning {
 		//putQ(state, action, q);
 		//this.qValues.put(state, m);
 		state.setRewards(q, action.id);
-		//System.out.println(feedbackValue);
+		//System.out.println(feedbackValue + " action="+action);
 	}
 	
 	

@@ -48,7 +48,7 @@ public class Main {
 		}
 		//*/
 		//*
-		Mandator mandator = new Mandator(100);
+		Mandator mandator = new Mandator(10);
 		//mandator.loadLabs("./stage/labStages");
 		//mandator.runLab();
 		//*/

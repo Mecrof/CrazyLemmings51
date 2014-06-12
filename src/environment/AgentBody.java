@@ -13,5 +13,7 @@ public interface AgentBody {
 	public Sensor getSensor();
 	
 	public Reward getReward();
+	
+	public int getDirection();
 
 }

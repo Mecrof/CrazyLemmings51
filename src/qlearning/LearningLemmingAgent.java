@@ -11,6 +11,7 @@ import environment.Sensor;
 import environment.lemming.ActionInfluence;
 import environment.lemming.Lemming;
 import environment.lemming.PerceivedType;
+import environment.lemming.Type;
 
 public class LearningLemmingAgent extends LemmingAgent{
 
@@ -22,7 +23,7 @@ public class LearningLemmingAgent extends LemmingAgent{
 	
 	private final int Number_iterations = 5;
 	
-	private final float rndAction = 0.2f;
+	private  float rndAction = 0.1f;
 	
 	private QState oldState = null;
 	
@@ -48,6 +49,7 @@ public class LearningLemmingAgent extends LemmingAgent{
 	public void live() {
 		if (this.getBody().isDead())
 		{
+			System.out.print("!!!im dead");
 			killMe();
 		}
 		else
@@ -66,11 +68,13 @@ public class LearningLemmingAgent extends LemmingAgent{
 			Perceivable perceivedObject = it.next();
 			if (perceivedObject instanceof PerceivedType)
 			{
+				//System.out.println(perceivedObject.toString());
 					Point portalDirection = ((PerceivedType) perceivedObject).getPortalDirection();
 					if (portalDirection.x == 0 && portalDirection.y == 0)
 					{
 						killMe();
-						//System.out.println(": I have just reached the portal !! :D");
+						System.out.println(": I have just reached the portal !! :D");
+						this.win();
 						return;
 					}
 			}
@@ -88,30 +92,57 @@ public class LearningLemmingAgent extends LemmingAgent{
 		this.qProblem.translateCurrentState(perceptions);
 		
 		QState previousState = this.qProblem.getCurrentState();
+		//System.out.println(previousState.getDescription());
 		oldState = this.qProblem.getCurrentState();
 		//this.qLearning.learn(Number_iterations);
 		
 		
 		
 		Action action = null;
+		//if (isLearning)
+		//{
 		if (isLearning)
 		{
+			rndAction =0.9f;
+		}
 			if(rnd.nextFloat() < rndAction)
 			{
-				//System.out.println("Random action");
+				//System.out.println("RANDOM !!!!");
 				List<Action> actions = this.qProblem.getAvailableActionsFor(previousState);
 				action = actions.get(rnd.nextInt(actions.size()));
 			}
 			else
 			{
 				//System.out.println("Best action");
-				action = this.qLearning.getBestAction(this.qProblem.getCurrentState());
+				if (isLearning)
+				{
+					action = this.qLearning.getBestAction(this.qProblem.getCurrentState());
+				}
+				else
+				{
+					QState state = this.qProblem.getCurrentState();
+					if (state.getLeftup()==Type.FLOOR && state.getRightup()==Type.FLOOR)
+					{
+						if (this.getBody().getDirection() == Lemming.LEFT)
+						{
+							action = Action.WALK_LEFT;
+						}
+						else
+						{
+							action = Action.WALK_RIGHT;
+						}
+					}
+					else
+					{
+						action = this.qLearning.getBestAction(state);
+					}
+				}
 			}
-		}
+		/*}
 		else
 		{
 			action = this.qLearning.getBestAction(this.qProblem.getCurrentState());
-		}
+		}*/
 		//Action action = this.qLearning.getBestAction(this.qProblem.getCurrentState());
 		
 		ActionInfluence newAction = new ActionInfluence(this, action);

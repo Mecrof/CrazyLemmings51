@@ -6,11 +6,13 @@ public class EnvironmentState<C extends Cell> {
 
 	private LinkedList<C> world;
 	private int deads;
+	private int winners;
 	
-	public EnvironmentState(LinkedList<C> cells, int deads)
+	public EnvironmentState(LinkedList<C> cells, int deads, int winners)
 	{
 		this.world = cells;
 		this.deads = deads;
+		this.winners = winners;
 	}
 	
 	public LinkedList<C> getCurrentState() 
@@ -21,6 +23,11 @@ public class EnvironmentState<C extends Cell> {
 	public int getDeadNubmer()
 	{
 		return this.deads;
+	}
+	
+	public int getWinnerNubmer()
+	{
+		return this.winners;
 	}
 
 }

@@ -27,7 +27,7 @@ public class Mandator {
 	
 	
 	// lab variable
-	private LinkedList<LemmingEnvironment> labs;
+	private LinkedList<String> labsPathName;
 	private int nbIterationPerLab = 100;
 
 	private int nbMaxLab =54;
@@ -45,24 +45,28 @@ public class Mandator {
 		DefaultFrustrum frustrum = new DefaultFrustrum(null);
 		agentLab = new LearningLemmingAgent(0, 0, frustrum, true);
 		int nbStep;
-		int nbLab = (nbMaxLab > labs.size()) ? labs.size() : nbMaxLab;
+		int nbLab = (nbMaxLab > labsPathName.size()) ? labsPathName.size() : nbMaxLab;
 		//agentLab.setLearning(true);
 		for(int i = 0; i < nbLab; i++)
 		{
-			LemmingEnvironment currentEnvironment = labs.get(i);
-			frustrum.setEnvironment(currentEnvironment);
-			engine = new LemmingEngine(currentEnvironment, frameRate);
-			System.out.println(currentEnvironment.toString());
+			
 			for (int j = 0; j < nbIterationPerLab; j++)
 			{
-				System.out.println(j);
+				System.out.println("##"+j);
+				LemmingEnvironment currentEnvironment = new LemmingEnvironment(LAB_STAGE_SIZE, LAB_STAGE_SIZE, labsPathName.get(i));
+				frustrum.setEnvironment(currentEnvironment);
+				engine = new LemmingEngine(currentEnvironment, frameRate);
+				//System.out.println(currentEnvironment.toString());
+				
 				nbStep = 0;
+				agentLab.createBody().setDead(false);
 				agentLab.createBody().setPosition(currentEnvironment, currentEnvironment.getStartPosition());
 				//currentEnvironment.addWorldObject(agentLab.createBody());
 				engine.enableAgent(agentLab);
 				agentLab.ressucite();
 				while (nbStep < nbStepMaxInIteration && !agentLab.isKilled())
 				{
+					//System.out.println(currentEnvironment.toString());
 					System.out.print(".");
 					nbStep++;
 					engine.runAgents();
@@ -99,7 +103,7 @@ public class Mandator {
 	
 	public void loadLabs(String labStageFile)
 	{
-		labs = new LinkedList<LemmingEnvironment>();
+		labsPathName = new LinkedList<String>();
 		BufferedReader buffer = null;
 		try
 		{
@@ -109,7 +113,7 @@ public class Mandator {
 			System.out.println(path);
 			while ( (line = buffer.readLine()) != null)
 			{
-				labs.add(new LemmingEnvironment(LAB_STAGE_SIZE, LAB_STAGE_SIZE, path+line));
+				labsPathName.add(path+line);
 			}
 		}
 		catch (IOException e) {
@@ -132,9 +136,10 @@ public class Mandator {
 		
 		// TODO: clone memory of agentLab in the new agent
 		try {
+			LearningLemmingAgent ag;
 			for (int i = 0; i < number; i++)
 			{
-				LearningLemmingAgent ag = new LearningLemmingAgent(world.getStartPosition().x, 
+				ag = new LearningLemmingAgent(world.getStartPosition().x, 
 					world.getStartPosition().y, 
 					new DefaultFrustrum(world),
 					false

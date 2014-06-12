@@ -181,7 +181,8 @@ public class World extends JPanel implements EnvironmentListener {
 			g.drawImage(this.world, 0, 0, this.getWidth(), this.getHeight(), null);		
 			
 			g.setColor(Color.WHITE);
-			g.drawString("Morts : " + this.state.getDeadNubmer(), 5, 15);
+			g.drawString("Deads : " + this.state.getDeadNubmer(), 5, 15);
+			g.drawString("Winners : " + this.state.getWinnerNubmer(), 5, 25);
 		}
 		else
 		{
@@ -192,7 +193,8 @@ public class World extends JPanel implements EnvironmentListener {
 			{
 				this.paintWorld(g);
 				g.setColor(Color.WHITE);
-				g.drawString("Morts : " + this.state.getDeadNubmer(), 5, 15);
+				g.drawString("Deads : " + this.state.getDeadNubmer(), 5, 15);
+				g.drawString("Winners : " + this.state.getWinnerNubmer(), 5, 25);
 			}
 		}	
 	}

@@ -97,6 +97,10 @@ public class LemmingEngine implements Engine {
 				LemmingAgent ag = it.next();
 				if (ag.isKilled())
 				{
+					if (ag.hasReachedPortal())
+					{
+						this.environment.addNewWinner();
+					}
 					int index = agents.indexOf(ag);
 					it.remove();
 					Lemming lem = lemmings.remove(index);

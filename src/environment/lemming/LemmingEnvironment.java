@@ -16,12 +16,14 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 
 	private Portal portal;
 	private int deads;
+	private int winners;
 	private Point startPosition;
 	private String stageFile;
 	
 	public LemmingEnvironment(int w, int h, String stage) {
 		super(w, h);
 		this.deads = 0;
+		this.winners = 0;
 		this.stageFile = stage;
 		this.build();
 	}
@@ -124,6 +126,16 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 	{
 		this.deads++;
 	}
+	
+	public void addNewWinner()
+	{
+		this.winners++;
+	}
+	
+	public int getWinners()
+	{
+		return winners;
+	}
 
 	@Override
 	public void fireChange() 
@@ -131,7 +143,7 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 		Iterator<EnvironmentListener> it = this.listeners.iterator();
 		while(it.hasNext())
 		{
-			it.next().onEnvironmentChanged(new EnvironmentEvent(new EnvironmentState<TypeCell>(this.cells, this.deads)));
+			it.next().onEnvironmentChanged(new EnvironmentEvent(new EnvironmentState<TypeCell>(this.cells, this.deads, this.winners)));
 		}
 	}
 

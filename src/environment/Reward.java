@@ -3,10 +3,10 @@ package environment;
 public class Reward {
 	
 	public static final int VERY_GOOD_ACTION = 100;
-	public static final int GOOD_ACTION = 1;
-	public static final int NOTHING_HAPPENED = 0;
-	public static final int BAD_ACTION = -1;
-	public static final int VERY_BAD_ACTION = -2;
+	public static final int GOOD_ACTION = 20;
+	public static final int NOTHING_HAPPENED = -5;
+	public static final int BAD_ACTION = -20;
+	public static final int VERY_BAD_ACTION = -50;
 	public static final int YOU_STUPID = -100;
 	
 	public final int reward;

@@ -8,10 +8,12 @@ abstract public class LemmingAgent extends Agent<Lemming> {
 
 	private final Lemming body;
 	private boolean killed;
+	private boolean reachedPortal;
 	
 	public LemmingAgent(int posX, int posY, boolean traversable, int direction, Sensor s) {
 		this.body = new Lemming(posX, posY, traversable, direction, s);
 		this.killed = false;
+		this.reachedPortal = false;
 	}
 	
 	@Override
@@ -36,6 +38,16 @@ abstract public class LemmingAgent extends Agent<Lemming> {
 	public void ressucite()
 	{
 		killed = false;
+	}
+	
+	public boolean hasReachedPortal()
+	{
+		return reachedPortal;
+	}
+	
+	protected void win()
+	{
+		this.reachedPortal = true;
 	}
 
 }
