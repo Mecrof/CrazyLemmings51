@@ -55,16 +55,16 @@ public class RandomLemmingAgent extends LemmingAgent {
 			ActionInfluence action;
 			switch (r) {
 			case 0:
-				action = new ActionInfluence(this, Action.WALK_FRONT);
+				action = new ActionInfluence(this, Action.WALK_RIGHT);
 				break;
 			case 1:
-				action = new ActionInfluence(this, Action.WALK_BACK);
+				action = new ActionInfluence(this, Action.WALK_LEFT);
 				break;
 			case 2:
-				action = new ActionInfluence(this, Action.DIG_FRONT);
+				action = new ActionInfluence(this, Action.DIG_RIGHT);
 				break;
 			case 3:
-				action = new ActionInfluence(this, Action.DIG_BACK);
+				action = new ActionInfluence(this, Action.DIG_LEFT);
 				break;
 			case 4:
 				action = new ActionInfluence(this, Action.DIG_BELOW);
@@ -74,6 +74,7 @@ public class RandomLemmingAgent extends LemmingAgent {
 				action = new ActionInfluence(this, Action.STAY);
 				break;
 			}
+			System.out.println("do:"+action.getAction());
 			this.getBody().influence(action);
 		}
 	}

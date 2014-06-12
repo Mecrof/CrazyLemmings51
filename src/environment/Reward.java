@@ -2,11 +2,12 @@ package environment;
 
 public class Reward {
 	
-	public static final int VERY_GOOD_ACTION = 2;
+	public static final int VERY_GOOD_ACTION = 10;
 	public static final int GOOD_ACTION = 1;
 	public static final int NOTHING_HAPPENED = 0;
 	public static final int BAD_ACTION = -1;
 	public static final int VERY_BAD_ACTION = -2;
+	public static final int YOU_STUPID = -10;
 	
 	public final int reward;
 	

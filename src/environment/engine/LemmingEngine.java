@@ -20,14 +20,14 @@ import environment.lemming.TypeCell;
 public class LemmingEngine implements Engine {
 	
 	// rewards
-	private final Reward r_Dig_In_Rock = new Reward(		Reward.VERY_BAD_ACTION);
-	private final Reward r_Dig_In_Air = new Reward(			Reward.VERY_BAD_ACTION);
-	private final Reward r_Walk_In_Solid_Type = new Reward(	Reward.VERY_BAD_ACTION);
-	private final Reward r_Go_Down_And_Die = new Reward(	Reward.VERY_BAD_ACTION);
-	private final Reward r_Closer_To_Portal = new Reward(	Reward.GOOD_ACTION);
-	private final Reward r_Further_To_Portal = new Reward(	Reward.BAD_ACTION);
-	private final Reward r_Stay = new Reward(				Reward.NOTHING_HAPPENED);
-	private final Reward r_Reached_Portal = new Reward(		Reward.VERY_GOOD_ACTION);
+	private final Reward r_Dig_In_Rock = new Reward(		Reward.VERY_BAD_ACTION); 	// -2
+	private final Reward r_Dig_In_Air = new Reward(			Reward.VERY_BAD_ACTION); 	// -2
+	private final Reward r_Walk_In_Solid_Type = new Reward(	Reward.VERY_BAD_ACTION); 	// -2
+	private final Reward r_Go_Down_And_Die = new Reward(	Reward.YOU_STUPID); 		// -10
+	private final Reward r_Closer_To_Portal = new Reward(	Reward.GOOD_ACTION); 		// +1
+	private final Reward r_Further_To_Portal = new Reward(	Reward.BAD_ACTION);  		// -1
+	private final Reward r_Stay = new Reward(				Reward.NOTHING_HAPPENED); 	// +0
+	private final Reward r_Reached_Portal = new Reward(		Reward.VERY_GOOD_ACTION);	// +2
 	
 	private final Lock LOCK = new Lock();
 	
@@ -126,14 +126,14 @@ public class LemmingEngine implements Engine {
 		if (!lemming.isDead())
 		{
 			switch (influence.getAction()) {
-			case WALK_FRONT:
-				return walk(lemming, Action.WALK_FRONT);
-			case WALK_BACK:
-				return walk(lemming, Action.WALK_BACK);
-			case DIG_FRONT:
-				return dig(lemming, Action.DIG_FRONT);
-			case DIG_BACK:
-				return dig(lemming, Action.DIG_BACK);
+			case WALK_RIGHT:
+				return walk(lemming, Action.WALK_RIGHT);
+			case WALK_LEFT:
+				return walk(lemming, Action.WALK_LEFT);
+			case DIG_RIGHT:
+				return dig(lemming, Action.DIG_RIGHT);
+			case DIG_LEFT:
+				return dig(lemming, Action.DIG_LEFT);
 			case DIG_BELOW:
 				return dig(lemming, Action.DIG_BELOW);
 			default:
@@ -259,29 +259,15 @@ public class LemmingEngine implements Engine {
 		}
 		else
 		{
-			if (lemming.getDirection() == Lemming.RIGHT)
+			if (action == Action.WALK_RIGHT || action == Action.DIG_RIGHT)
 			{
-				if (action == Action.WALK_FRONT || action == Action.DIG_FRONT)
-				{
-					targetCell = environment.getCellAt(position.x+1, position.y);
-				}
-				else
-				{
-					targetCell = environment.getCellAt(position.x-1, position.y);
-					lemming.setDirection(Lemming.LEFT);
-				}
+				targetCell = environment.getCellAt(position.x+1, position.y);
+				lemming.setDirection(Lemming.RIGHT);
 			}
 			else
 			{
-				if (action == Action.WALK_FRONT || action == Action.DIG_FRONT)
-				{
-					targetCell = environment.getCellAt(position.x-1, position.y);
-				}
-				else
-				{
-					targetCell = environment.getCellAt(position.x+1, position.y);
-					lemming.setDirection(Lemming.RIGHT);
-				}
+				targetCell = environment.getCellAt(position.x-1, position.y);
+				lemming.setDirection(Lemming.LEFT);
 			}
 		}
 		return targetCell;
