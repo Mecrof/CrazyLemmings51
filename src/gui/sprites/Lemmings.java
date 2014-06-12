@@ -2,10 +2,16 @@ package gui.sprites;
 
 import gui.GUI;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
+import java.awt.image.RGBImageFilter;
 
 
 public class Lemmings extends Sprite {
@@ -26,20 +32,22 @@ public class Lemmings extends Sprite {
 	{
 		super(Type.LEMMING);
 		
-		this.left = new BufferedImage(Sprite.WIDTH, Sprite.HEIGHT, BufferedImage.TYPE_INT_RGB);
-		this.left.getGraphics().drawImage(this.image, 0, 0, 10, 10, 20, 10, 30, 20, null);
+		Image image = Transparency.makeColorTransparent(this.image);
 		
-		this.right = new BufferedImage(Sprite.WIDTH, Sprite.HEIGHT, BufferedImage.TYPE_INT_RGB);
-		this.right.getGraphics().drawImage(this.image, 0, 0, 10, 10, 20, 0, 30, 10, null);
+		this.left = new BufferedImage((int) GUI.RATIO_X, (int) GUI.RATIO_Y, BufferedImage.TYPE_INT_ARGB);
+		this.left.getGraphics().drawImage(image, 0, 0, 10, 10, 20, 10, 30, 20, null);
 		
-		this.digRight = new BufferedImage(Sprite.WIDTH, Sprite.HEIGHT, BufferedImage.TYPE_INT_RGB);
-		this.digRight.getGraphics().drawImage(this.image, 0, 0, 10, 10, 22, 327, 32, 338, null);
+		this.right = new BufferedImage((int) GUI.RATIO_X, (int) GUI.RATIO_Y, BufferedImage.TYPE_INT_ARGB);
+		this.right.getGraphics().drawImage(image, 0, 0, 10, 10, 20, 0, 30, 10, null);
 		
-		this.digLeft = new BufferedImage(Sprite.WIDTH, Sprite.HEIGHT, BufferedImage.TYPE_INT_RGB);
-		this.digLeft.getGraphics().drawImage(this.image, 0, 0, 10, 10, 16, 301, 26, 313, null);
+		this.digRight = new BufferedImage((int) GUI.RATIO_X, (int) GUI.RATIO_Y, BufferedImage.TYPE_INT_ARGB);
+		this.digRight.getGraphics().drawImage(image, 0, 0, 10, 10, 22, 327, 32, 338, null);
 		
-		this.dead = new BufferedImage(Sprite.WIDTH, Sprite.HEIGHT, BufferedImage.TYPE_INT_RGB);
-		this.dead.getGraphics().drawImage(this.image, 0, 0, 10, 10, 69, 172, 76, 178, null);
+		this.digLeft = new BufferedImage((int) GUI.RATIO_X, (int) GUI.RATIO_Y, BufferedImage.TYPE_INT_ARGB);
+		this.digLeft.getGraphics().drawImage(image, 0, 0, 10, 10, 16, 301, 26, 313, null);
+		
+		this.dead = new BufferedImage((int) GUI.RATIO_X, (int) GUI.RATIO_Y, BufferedImage.TYPE_INT_ARGB);
+		this.dead.getGraphics().drawImage(image, 0, 0, 10, 10, 69, 172, 76, 178, null);
 		
 		this.updateSprite();
 	}
@@ -82,6 +90,28 @@ public class Lemmings extends Sprite {
 		this.digLeftScaled = this.digLeft.getScaledInstance((int) GUI.RATIO_X, (int) GUI.RATIO_Y, BufferedImage.SCALE_SMOOTH);
 		this.digRightScaled = this.digRight.getScaledInstance((int) GUI.RATIO_X, (int) GUI.RATIO_Y, BufferedImage.SCALE_SMOOTH);
 		this.deadScaled = this.dead.getScaledInstance((int) GUI.RATIO_X, (int) GUI.RATIO_Y, BufferedImage.SCALE_SMOOTH);
+	}
+	
+	private static class Transparency 
+	{
+		public static Image makeColorTransparent(BufferedImage image)
+		{
+			ImageFilter filter = new RGBImageFilter() {
+		    	private int markerRGB = Color.BLACK.getRGB() | 0xFF000000;
+
+		    	@Override
+		    	public final int filterRGB(int x, int y, int rgb) 
+		    	{
+		    		if((rgb | 0xFF000000 ) == markerRGB ) 
+		    			return 0x00FFFFFF & rgb;
+		    		else 
+		    			return rgb;
+		    	}
+		    }; 
+
+		    ImageProducer ip = new FilteredImageSource(image.getSource(), filter);
+		    return Toolkit.getDefaultToolkit().createImage(ip);
+		}
 	}
 
 }

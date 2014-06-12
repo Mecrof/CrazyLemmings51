@@ -19,23 +19,33 @@ public class MouseListener extends MouseAdapter {
 
 	private LemmingEnvironment environment;
 	private Point oldPosition;
-	private final Lock LOCK;
+	private Lock lock;
+	private Type typeBlock;
 	
-	public MouseListener(LemmingEnvironment e, Lock lock)
+	public MouseListener()
+	{
+		this.oldPosition = new Point();
+		this.typeBlock = Type.ROCK;
+	}
+	
+	public void setWorld(LemmingEnvironment e)
 	{
 		this.environment = e;
-		this.oldPosition = new Point();
-		
-		this.LOCK = lock;
+	}
+	
+	public void setLock(Lock lock)
+	{
+		this.lock = lock;
 	}
 	
 	@Override
 	public void mouseMoved(MouseEvent e) 
 	{
-		if(!this.LOCK.isLocked())
+		if(this.lock == null || !this.lock.isLocked() || this.environment == null)
 			return;
 		
 		World world = (World) e.getSource();
+		
 		final Graphics g = world.getGraphics();
 		final Point position = e.getPoint();
 		
@@ -68,19 +78,23 @@ public class MouseListener extends MouseAdapter {
 	{
 		if(SwingUtilities.isRightMouseButton(e))
 		{
-			this.LOCK.setLocked(!this.LOCK.isLocked());
+			this.lock.setLocked(!this.lock.isLocked());
 			
-			if(!this.LOCK.isLocked())
+			if(!this.lock.isLocked())
 			{
 				((World) e.getSource()).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-				this.LOCK.notifyUnlocked();
+				this.lock.notifyUnlocked();
+				((World) e.getSource()).setEditionMode(false);
 			}
 			else
+			{
 				((World) e.getSource()).setCursor(new Cursor(Cursor.HAND_CURSOR));
+				((World) e.getSource()).setEditionMode(true);
+			}
 			
 			return;
 		}
-		else if((SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isMiddleMouseButton(e)) && !this.LOCK.isLocked())
+		else if((SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isMiddleMouseButton(e)) && !this.lock.isLocked())
 			return;
 		
 		World world = (World) e.getSource();
@@ -102,7 +116,16 @@ public class MouseListener extends MouseAdapter {
 		
 		if(cell.getType() == Type.EMPTY && !cell.getIterator().hasNext() && SwingUtilities.isLeftMouseButton(e))
 		{
-			cell.setType(Type.ROCK);
+			switch(this.typeBlock)
+			{
+				case ROCK:
+					cell.setType(Type.ROCK);
+					break;
+				case CLAY:
+					cell.setType(Type.CLAY);
+					break;
+			}
+			
 		}
 		else if(cell.getType() != Type.EMPTY && SwingUtilities.isMiddleMouseButton(e))
 		{
@@ -119,5 +142,10 @@ public class MouseListener extends MouseAdapter {
 				g.drawRect((int) (position.x*GUI.RATIO_X), (int) (position.y*GUI.RATIO_Y), (int) GUI.RATIO_X, (int) GUI.RATIO_Y);
 			}
 		});
+	}
+
+	public void setBlockType(Type type) 
+	{
+		this.typeBlock = type;
 	}
 }

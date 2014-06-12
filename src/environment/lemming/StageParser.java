@@ -21,7 +21,7 @@ public class StageParser {
 	{
 		try 
 		{
-			this.reader = new BufferedReader(new FileReader(this.getClass().getResource(this.stageName).getPath()));
+			this.reader = new BufferedReader(new FileReader(this.stageName));
 		} 
 		catch (FileNotFoundException e) 
 		{

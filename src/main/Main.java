@@ -1,4 +1,7 @@
+package main;
 import java.awt.Point;
+
+import javax.swing.UIManager;
 
 import qlearning.LearningLemmingAgent;
 import qlearning.RandomLemmingAgent;
@@ -13,6 +16,14 @@ public class Main {
 
 	public static void main(String[] args) {
 		
+		 try {
+	            // Set cross-platform Java L&F (also called "Metal")
+	        UIManager.setLookAndFeel(
+	            UIManager.getSystemLookAndFeelClassName());
+	    } 
+	    catch (Exception e) {
+	       // handle exception
+	    }
 		/*
 		LemmingEnvironment e = new LemmingEnvironment(80, 60, "../../stage/stage_1");
 		Point startPosition = e.getStartPosition();
@@ -38,22 +49,27 @@ public class Main {
 		//*/
 		//*
 		Mandator mandator = new Mandator(100);
-		mandator.loadLabs("./stage/labStages");
-		mandator.runLab();
+		//mandator.loadLabs("./stage/labStages");
+		//mandator.runLab();
 		//*/
 		//*
 		//Mandator mandator = new Mandator(100);
-		mandator.loadWorld("../../stage/stage_1");
+		//mandator.loadWorld("../../stage/stage_1");
 		GUI gui = new GUI();
-		gui.setMouseListener(new MouseListener(mandator.getWorld(), mandator.getEngine().getLock()));
-		mandator.getWorld().addListener(gui.WorldPanel());
-		mandator.getEngine().initialize();
+		gui.setMandator(mandator);
+		gui.setMouseListener(new MouseListener());
+		
+		//mandator.getWorld().addListener(gui.WorldPanel());
+		//mandator.getEngine().initialize();
+		
 		gui.pack();
 		gui.setVisible(true);
+		
 		//System.out.println(e.toString());
 		//engine.run();
-		mandator.addLemmingsInWorld(20);
-		mandator.runInWorld();
+		
+		//mandator.addLemmingsInWorld(20);
+		//mandator.runInWorld();
 		//*/
 	}
 

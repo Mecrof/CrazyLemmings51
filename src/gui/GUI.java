@@ -6,8 +6,10 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
+import main.Mandator;
 import environment.engine.LemmingEngine;
 
 public class GUI extends JFrame implements ComponentListener, WindowListener {
@@ -20,15 +22,25 @@ public class GUI extends JFrame implements ComponentListener, WindowListener {
 	public static float RATIO_Y = 10;
 	
 	private World mainPanel;
-
+	private InteractionPanel intPanel;
+	
 	public GUI()
 	{
-		this.setPreferredSize(new Dimension(WIDTH + 16, HEIGHT + 39));
+		this.setPreferredSize(new Dimension(1024, 768));
+		this.setMinimumSize(new Dimension(640, 480));
+		
 		this.mainPanel = new World();
-		this.add(this.mainPanel);
+		this.intPanel = new InteractionPanel(this);
 		
 		this.addComponentListener(this);
 		this.addWindowListener(this);
+		
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.X_AXIS));
+		
+		this.add(this.mainPanel);
+		this.add(this.intPanel);
 	}
 
 	public World WorldPanel() 
@@ -45,8 +57,8 @@ public class GUI extends JFrame implements ComponentListener, WindowListener {
 	@Override
 	public void componentResized(ComponentEvent arg0) 
 	{
-		RATIO_X = (int) ((this.getWidth() - 16) / 80.0f);
-		RATIO_Y = (int) ((this.getHeight() - 39) / 60.0f);
+		RATIO_X = (int) ((this.mainPanel.getWidth() - 16) / 80.0f);
+		RATIO_Y = (int) ((this.mainPanel.getHeight() - 39) / 60.0f);
 		
 		this.mainPanel.updateSprites();
 	}
@@ -101,5 +113,24 @@ public class GUI extends JFrame implements ComponentListener, WindowListener {
 	@Override
 	public void windowOpened(WindowEvent arg0) 
 	{
+	}
+
+	public void setMandator(Mandator mandator) 
+	{
+		this.intPanel.setMandator(mandator);
+	}
+
+	public void setMandatorListenerData(Mandator mandator) {
+		MouseListener listener = (MouseListener) this.mainPanel.getMouseListeners()[0];
+		
+		listener.setWorld(mandator.getWorld());
+		listener.setLock(mandator.getEngine().getLock());
+	}
+
+	public void setBlockType(environment.lemming.Type type) 
+	{
+		MouseListener listener = (MouseListener) this.mainPanel.getMouseListeners()[0];
+		
+		listener.setBlockType(type);
 	}
 }

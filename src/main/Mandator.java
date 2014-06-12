@@ -1,7 +1,14 @@
+package main;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import qlearning.LearningLemmingAgent;
 import environment.DefaultFrustrum;
@@ -26,6 +33,7 @@ public class Mandator {
 	private int nbStepMaxInIteration = 70;
 	private LearningLemmingAgent agentLab;
 	private int frameRate;
+	private Executor singleThreadExecutor = Executors.newSingleThreadExecutor();
 	
 	public Mandator(int fps) {
 		this.frameRate = fps;
@@ -65,7 +73,15 @@ public class Mandator {
 	
 	public void runInWorld()
 	{
-		engine.run();/*
+		singleThreadExecutor.execute(new Runnable() {
+			@Override
+			public void run() 
+			{
+				engine.run();
+			}
+		});
+
+		/*
 		if (addingLemming)
 		{
 			this.addLemmingInWorld();
@@ -87,10 +103,12 @@ public class Mandator {
 		try
 		{
 			String line;
-			buffer = new BufferedReader(new FileReader(this.getClass().getResource(labStageFile).getPath()));
+			String path = labStageFile.substring(0, labStageFile.lastIndexOf(File.separatorChar) + 1);
+			buffer = new BufferedReader(new FileReader(labStageFile));
+			System.out.println(path);
 			while ( (line = buffer.readLine()) != null)
 			{
-				labs.add(new LemmingEnvironment(LAB_STAGE_SIZE, LAB_STAGE_SIZE, "../../stage/"+line));
+				labs.add(new LemmingEnvironment(LAB_STAGE_SIZE, LAB_STAGE_SIZE, path+line));
 			}
 		}
 		catch (IOException e) {
@@ -106,8 +124,11 @@ public class Mandator {
 		}
 	}
 	
-	public void addLemmingsInWorld(int number)
+	public synchronized void addLemmingsInWorld(int number)
 	{
+		synchronized (this.engine.getMutex()) {
+			
+		
 		// TODO: clone memory of agentLab in the new agent
 		try {
 			for (int i = 0; i < number; i++)
@@ -117,6 +138,7 @@ public class Mandator {
 					new DefaultFrustrum(world),
 					false
 					);
+			
 				ag.setqProblem(agentLab.getqProblem());
 				world.addWorldObject(ag.createBody());
 				engine.enableAgent(ag);
@@ -124,6 +146,7 @@ public class Mandator {
 		} catch (CellNotFoundException e) {
 			System.out.println("Error during adding new agent lemming in Mandator");
 			e.printStackTrace();
+		}
 		}
 	}
 
@@ -135,4 +158,22 @@ public class Mandator {
 		return engine;
 	}
 
+	public void reset(String stageFile)
+	{
+		LemmingEngine.exit();
+	}
+
+	public void setNbIterationPerLab(int nbIterationPerLab) 
+	{
+		this.nbIterationPerLab = nbIterationPerLab;
+	}
+	public void setNbMaxLab(int nbMaxLab)
+	{
+		this.nbMaxLab = nbMaxLab;
+	}
+
+	public void setNbStepMaxInIteration(int nbStepMaxInIteration)
+	{
+		this.nbStepMaxInIteration = nbStepMaxInIteration;
+	}
 }

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import qlearning.Action;
+import qlearning.LearningLemmingAgent;
 import qlearning.LemmingAgent;
 import environment.Influence;
 import environment.Reward;
@@ -31,6 +32,7 @@ public class LemmingEngine implements Engine {
 	private final Reward r_Go_Under_Portal = new Reward(	Reward.YOU_STUPID);         // -100
 	
 	private final Lock LOCK = new Lock();
+	private final Object mutex = new Object();
 	
 	private final int HIGH_TO_DIE = 7;
 	
@@ -46,7 +48,6 @@ public class LemmingEngine implements Engine {
 		this.timePerFrame = tpf;
 		lemmings = new LinkedList<Lemming>();
 		agents = new LinkedList<LemmingAgent>();
-		
 	}
 
 	@Override
@@ -69,7 +70,7 @@ public class LemmingEngine implements Engine {
 	}
 
 	@Override
-	synchronized public void run() {
+	public void run() {
 		while(!ended)
 		{
 			if(LOCK.isLocked())
@@ -88,42 +89,45 @@ public class LemmingEngine implements Engine {
 	
 	public void runAgents()
 	{
-		Iterator<LemmingAgent> it = agents.iterator();
-		while(it.hasNext())
+		synchronized(this.mutex)
 		{
-			LemmingAgent ag = it.next();
-			if (ag.isKilled())
+			Iterator<LemmingAgent> it = agents.iterator();
+			while(it.hasNext())
 			{
-				int index = agents.indexOf(ag);
-				it.remove();
-				Lemming lem = lemmings.remove(index);
-				try {
-					environment.detachWorldObject(lem);
-				} catch (CellNotFoundException e) {
-					e.printStackTrace();
+				LemmingAgent ag = it.next();
+				if (ag.isKilled())
+				{
+					int index = agents.indexOf(ag);
+					it.remove();
+					Lemming lem = lemmings.remove(index);
+					try {
+						environment.detachWorldObject(lem);
+					} catch (CellNotFoundException e) {
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+					ag.live();
 				}
 			}
-			else
+			Iterator<Lemming> itLem = lemmings.iterator();
+			while(itLem.hasNext())
 			{
-				ag.live();
+				Lemming lemming = itLem.next();
+				lemming.setDigging(false);
+				Influence influence = lemming.getInfluence();
+				Reward reward;
+				if (influence instanceof ActionInfluence)
+				{
+					reward = this.applyActionInfluence((ActionInfluence) influence, lemming);
+				}
+				else
+				{
+					reward = new Reward(Reward.NOTHING_HAPPENED);
+				}
+				lemming.setReward(reward);
 			}
-		}
-		Iterator<Lemming> itLem = lemmings.iterator();
-		while(itLem.hasNext())
-		{
-			Lemming lemming = itLem.next();
-			lemming.setDigging(false);
-			Influence influence = lemming.getInfluence();
-			Reward reward;
-			if (influence instanceof ActionInfluence)
-			{
-				reward = this.applyActionInfluence((ActionInfluence) influence, lemming);
-			}
-			else
-			{
-				reward = new Reward(Reward.NOTHING_HAPPENED);
-			}
-			lemming.setReward(reward);
 		}
 	}
 	
@@ -238,15 +242,13 @@ public class LemmingEngine implements Engine {
 		return reward;
 	}
 	
-	private Reward isCloserToPortal(Point oldPos, Point newPos)
+	/*private boolean isCloserToPortal(Point oldPos, Point newPos)
 	{
 		Point posPortal = environment.getPortal().getPosition();
-		if (posPortal.y > newPos.y)
-			return r_Go_Under_Portal;
 		if (posPortal.distance(oldPos) > posPortal.distance(newPos))
-			return r_Closer_To_Portal;
-		return r_Further_To_Portal;
-	}
+			return true;
+		return false;
+	}*/
 	
 	private TypeCell getTargetCell(Lemming lemming, Action action) throws CellNotFoundException
 	{
@@ -314,7 +316,17 @@ public class LemmingEngine implements Engine {
 		ended = true;
 	}
 
+	public void reset()
+	{
+		lemmings = new LinkedList<Lemming>();
+		agents = new LinkedList<LemmingAgent>();
+	}
+	
 	public void setEnvironment(LemmingEnvironment environment) {
 		this.environment = environment;
+	}
+
+	public Object getMutex() {
+		return this.mutex;
 	}
 }
