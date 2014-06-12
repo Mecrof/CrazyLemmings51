@@ -16,26 +16,29 @@ public class QProblem {
 	private QState currentState = null;
 	
 	//states contains every possible state
-	private final QState[] states = new QState[4096];
+	private int numberState = (int)Math.pow((double) Type.values().length, (double)Action.totalActions);
+	
+	private final QState[] states = new QState[numberState];
 	
 	public QProblem()
 	{
 		int number = 0;
 		String description;
+		int totalType = Type.values().length;
 		//for(int index = 0; index < states.length; index++)
 		//{
 			//List<QState> stateList = new ArrayList<QState>();
-			for(int i = 0; i <= 3; i++)
+			for(int i = 0; i < totalType; i++)
 			{
-				for(int j = 0; j <= 3; j++)
+				for(int j = 0; j < totalType; j++)
 				{
-					for(int k = 0; k <= 3; k++)
+					for(int k = 0; k < totalType; k++)
 					{	
-						for(int l = 0; l <= 3; l++)
+						for(int l = 0; l < totalType; l++)
 						{
-							for(int m = 0; m <= 3; m++)
+							for(int m = 0; m < totalType; m++)
 							{
-								for(int n = 0; n <= 3; n++)
+								for(int n = 0; n < totalType; n++)
 								{
 									description = "" + Type.getLetter(Type.getType(i)) + Type.getLetter(Type.getType(j)) + Type.getLetter(Type.getType(k)) + Type.getLetter(Type.getType(l)) + Type.getLetter(Type.getType(m)) + Type.getLetter(Type.getType(n)); 
 									//System.out.println(description);
