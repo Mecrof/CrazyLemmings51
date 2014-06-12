@@ -22,8 +22,8 @@ public class Mandator {
 	// lab variable
 	private LinkedList<LemmingEnvironment> labs;
 	private int nbIterationPerLab = 100;
-	private int nbMaxLab = 4;
-	private int nbStepMaxInIteration = 30;
+	private int nbMaxLab = 5;
+	private int nbStepMaxInIteration = 70;
 	private LearningLemmingAgent agentLab;
 	private int frameRate;
 	
@@ -46,7 +46,7 @@ public class Mandator {
 			System.out.println(currentEnvironment.toString());
 			for (int j = 0; j < nbIterationPerLab; j++)
 			{
-				System.out.println("it="+j);
+				System.out.println(j);
 				nbStep = 0;
 				agentLab.createBody().setPosition(currentEnvironment, currentEnvironment.getStartPosition());
 				//currentEnvironment.addWorldObject(agentLab.createBody());

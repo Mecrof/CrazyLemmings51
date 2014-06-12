@@ -20,14 +20,15 @@ import environment.lemming.TypeCell;
 public class LemmingEngine implements Engine {
 	
 	// rewards
-	private final Reward r_Dig_In_Rock = new Reward(		Reward.VERY_BAD_ACTION); 	// -2
-	private final Reward r_Dig_In_Air = new Reward(			Reward.VERY_BAD_ACTION); 	// -2
+	private final Reward r_Dig_In_Rock = new Reward(		Reward.YOU_STUPID); 	// -2
+	private final Reward r_Dig_In_Air = new Reward(			Reward.YOU_STUPID); 	// -2
 	private final Reward r_Walk_In_Solid_Type = new Reward(	Reward.VERY_BAD_ACTION); 	// -2
-	private final Reward r_Go_Down_And_Die = new Reward(	Reward.YOU_STUPID); 		// -10
-	private final Reward r_Closer_To_Portal = new Reward(	Reward.GOOD_ACTION); 		// +1
+	private final Reward r_Go_Down_And_Die = new Reward(	Reward.YOU_STUPID); 		// -100
+	private final Reward r_Closer_To_Portal = new Reward(	Reward.GOOD_ACTION); 		// +100
 	private final Reward r_Further_To_Portal = new Reward(	Reward.BAD_ACTION);  		// -1
 	private final Reward r_Stay = new Reward(				Reward.NOTHING_HAPPENED); 	// +0
 	private final Reward r_Reached_Portal = new Reward(		Reward.VERY_GOOD_ACTION);	// +2
+	private final Reward r_Go_Under_Portal = new Reward(	Reward.YOU_STUPID);         // -100
 	
 	private final Lock LOCK = new Lock();
 	
@@ -206,10 +207,7 @@ public class LemmingEngine implements Engine {
 					}
 					else
 					{
-						if (isCloserToPortal(currentPosition, lemming.getPosition()))
-							return r_Closer_To_Portal;
-						else
-							return r_Further_To_Portal;
+						return r_Closer_To_Portal;//isCloserToPortal(currentPosition, lemming.getPosition());
 					}
 				}
 			}
@@ -222,10 +220,7 @@ public class LemmingEngine implements Engine {
 				}
 				else
 				{
-					if (isCloserToPortal(currentPosition, targetCell.getPosition()))
-						return r_Closer_To_Portal;
-					else
-						return r_Further_To_Portal;
+					return r_Closer_To_Portal;//isCloserToPortal(currentPosition, targetCell.getPosition());
 				}
 			}
 		}catch(CellNotFoundException ex)
@@ -237,21 +232,20 @@ public class LemmingEngine implements Engine {
 			}
 			else
 			{
-				if (isCloserToPortal(currentPosition, targetCell.getPosition()))
-					return r_Closer_To_Portal;
-				else
-					return r_Further_To_Portal;
+				return r_Closer_To_Portal;//isCloserToPortal(currentPosition, targetCell.getPosition());
 			}
 		}
 		return reward;
 	}
 	
-	private boolean isCloserToPortal(Point oldPos, Point newPos)
+	private Reward isCloserToPortal(Point oldPos, Point newPos)
 	{
 		Point posPortal = environment.getPortal().getPosition();
+		if (posPortal.y > newPos.y)
+			return r_Go_Under_Portal;
 		if (posPortal.distance(oldPos) > posPortal.distance(newPos))
-			return true;
-		return false;
+			return r_Closer_To_Portal;
+		return r_Further_To_Portal;
 	}
 	
 	private TypeCell getTargetCell(Lemming lemming, Action action) throws CellNotFoundException

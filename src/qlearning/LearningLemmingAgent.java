@@ -70,7 +70,7 @@ public class LearningLemmingAgent extends LemmingAgent{
 					if (portalDirection.x == 0 && portalDirection.y == 0)
 					{
 						killMe();
-						System.out.println(": I have just reached the portal !! :D");
+						//System.out.println(": I have just reached the portal !! :D");
 						return;
 					}
 			}
@@ -94,16 +94,22 @@ public class LearningLemmingAgent extends LemmingAgent{
 		
 		
 		Action action = null;
-		
-		if(rnd.nextFloat() < rndAction)
+		if (isLearning)
 		{
-			//System.out.println("Random action");
-			List<Action> actions = this.qProblem.getAvailableActionsFor(previousState);
-			action = actions.get(rnd.nextInt(actions.size()));
+			if(rnd.nextFloat() < rndAction)
+			{
+				//System.out.println("Random action");
+				List<Action> actions = this.qProblem.getAvailableActionsFor(previousState);
+				action = actions.get(rnd.nextInt(actions.size()));
+			}
+			else
+			{
+				//System.out.println("Best action");
+				action = this.qLearning.getBestAction(this.qProblem.getCurrentState());
+			}
 		}
 		else
 		{
-			//System.out.println("Best action");
 			action = this.qLearning.getBestAction(this.qProblem.getCurrentState());
 		}
 		//Action action = this.qLearning.getBestAction(this.qProblem.getCurrentState());
