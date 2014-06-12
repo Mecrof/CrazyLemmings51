@@ -275,15 +275,13 @@ public class InteractionPanel extends JPanel implements ActionListener {
 				}
 				catch(Exception ex)
 				{
-					this.mandator.reset(this.setStage.getText());
-					this.mandator.getEngine().initialize();
-					this.mandator.runInWorld();
 				}
 			}
 			else if(button == this.reset)
 			{
-				this.mandator.reset(this.setStage.getText());
+				this.mandator.reset();
 				this.reset.setEnabled(false);
+				this.run.setEnabled(true);
 				this.run.doClick();
 			}
 		}

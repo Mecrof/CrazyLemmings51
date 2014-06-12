@@ -29,8 +29,9 @@ public class Mandator {
 	// lab variable
 	private LinkedList<LemmingEnvironment> labs;
 	private int nbIterationPerLab = 100;
-	private int nbMaxLab = 5;
-	private int nbStepMaxInIteration = 70;
+
+	private int nbMaxLab =54;
+	private int nbStepMaxInIteration =730;
 	private LearningLemmingAgent agentLab;
 	private int frameRate;
 	private Executor singleThreadExecutor = Executors.newSingleThreadExecutor();
@@ -158,11 +159,10 @@ public class Mandator {
 		return engine;
 	}
 
-	public void reset(String stageFile)
+	public void reset()
 	{
 		LemmingEngine.exit();
-	}
-
+	}
 	public void setNbIterationPerLab(int nbIterationPerLab) 
 	{
 		this.nbIterationPerLab = nbIterationPerLab;
@@ -176,4 +176,5 @@ public class Mandator {
 	{
 		this.nbStepMaxInIteration = nbStepMaxInIteration;
 	}
+
 }
