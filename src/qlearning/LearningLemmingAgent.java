@@ -1,5 +1,6 @@
 package qlearning;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,7 +14,7 @@ import environment.lemming.PerceivedType;
 
 public class LearningLemmingAgent extends LemmingAgent{
 
-	private final QProblem qProblem;
+	private QProblem qProblem;
 	
 	private final QLearning qLearning;
 	
@@ -23,10 +24,15 @@ public class LearningLemmingAgent extends LemmingAgent{
 	
 	private final float rndAction = 0.2f;
 	
-	public LearningLemmingAgent(int posX, int posY, Sensor s) {
+	private QState oldState = null;
+	
+	private Action previousAction = null;
+	
+	public LearningLemmingAgent(int posX, int posY, Sensor s, boolean isLearning) {
 		super(posX, posY, true, Lemming.RIGHT, s);
 		this.qProblem = new QProblem();
 		this.qLearning = new QLearning(this.qProblem);
+		this.isLearning = isLearning;
 	}
 	
 	public LearningLemmingAgent(int posX, int posY, boolean traversable,
@@ -34,27 +40,51 @@ public class LearningLemmingAgent extends LemmingAgent{
 		super(posX, posY, traversable, direction, s);
 		this.qProblem = new QProblem();
 		this.qLearning = new QLearning(this.qProblem);
+		this.isLearning = true;
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void live() {
 		// TODO Auto-generated method stub
-		//System.out.println("--------------------------------------");
+		System.out.println("--------------------------------------");
 		List<Perceivable> perceptions = this.getBody().getPerception();
 		
 		Random rnd = new Random();
 		
-		this.qProblem.translateCurrentState(perceptions);
-		
-		QState previousState = this.qProblem.getCurrentState();
-		
-		//this.qLearning.learn(Number_iterations);
+		QState currentState = this.qProblem.getCurrentState();
+		Iterator<Perceivable> it = perceptions.iterator();
+		while(it.hasNext())
+		{
+			Perceivable perceivedObject = it.next();
+			if (perceivedObject instanceof PerceivedType)
+			{
+					Point portalDirection = ((PerceivedType) perceivedObject).getPortalDirection();
+					if (portalDirection.x == 0 && portalDirection.y == 0)
+					{
+						killMe();
+						System.out.println(": I have just reached the portal !! :D");
+						return;
+					}
+			}
+		}
 		
 		if(this.isLearning)
 		{
-			//TODO : Lab test
+			if(oldState!=null && previousAction !=null)
+			{
+				//System.out.println("test");
+				this.qLearning.setReward(oldState, previousAction, this.getBody().getReward().reward, currentState);
+			}
 		}
+		
+		this.qProblem.translateCurrentState(perceptions);
+		
+		QState previousState = this.qProblem.getCurrentState();
+		oldState = this.qProblem.getCurrentState();
+		//this.qLearning.learn(Number_iterations);
+		
+		
 		
 		Action action = null;
 		
@@ -78,10 +108,47 @@ public class LearningLemmingAgent extends LemmingAgent{
 		
 		this.qProblem.translateCurrentState(perceptions);
 		
+		this.previousAction = action;
+		//String temp = new String();
+		
+		//QState tempstate = this.qProblem.getRandomState();
+		//String temp = tempstate.getDescription() + "  " + this.qLearning.getLearning(tempstate);
+		//System.out.println(temp);
+		
+		
 		//QState currentState = this.qProblem.getCurrentState();
 		
-		this.qLearning.setReward(previousState, action, this.getBody().getReward().reward);
 		
+		/*
+		if(this.isLearning)
+		{
+			//TODO : Lab test
+			this.qLearning.setReward(previousState, action, this.getBody().getReward().reward, currentState);
+		}
+		*/
+		//this.qLearning.setReward(previousState, action, this.getBody().getReward().reward);
+		
+	}
+	
+	public void getMemory(QState emptyMemory, QState loadedMemory)
+	{
+		for(int i = 0; i < Action.totalActions; i++)
+		{
+			emptyMemory.setRewards(loadedMemory.getRewards(i), i);
+		}
+	}
+	
+	public void getMemory(QProblem emptyMemory, QProblem loadedMemory)
+	{
+		emptyMemory = loadedMemory;
+	}
+	
+	public QProblem getqProblem() {
+		return qProblem;
+	}
+	
+	public void setqProblem(QProblem qProblem) {
+		this.qProblem = qProblem;
 	}
 
 }

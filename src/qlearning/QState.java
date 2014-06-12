@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import environment.lemming.Type;
+import qlearning.Action;
 
 @SuppressWarnings("rawtypes")
 public class QState implements Comparable {
@@ -19,6 +20,18 @@ public class QState implements Comparable {
 	private final int number;
 	private final String description;
 	
+	private float rewards[] = new float[Action.totalActions];
+	/**
+	 * 
+	 * @param lu Type
+	 * @param ld
+	 * @param ru
+	 * @param rd
+	 * @param b1
+	 * @param b2
+	 * @param number
+	 * @param description
+	 */
 	public QState (Type lu, Type ld, Type ru, Type rd, Type b1, Type b2, int number, String description)
 	{
 		this.leftup = lu;
@@ -35,6 +48,10 @@ public class QState implements Comparable {
 		else
 		{
 			this.description = description;
+		}
+		for(Action action : Action.values())
+		{
+			rewards[action.id] = 0.0f;
 		}
 	}
 	
@@ -73,6 +90,24 @@ public class QState implements Comparable {
 	
 	public int getNumber() {
 		return number;
+	}
+	
+	public float[] getRewards() {
+		return rewards;
+	}
+	
+	public float getRewards(int idAction)
+	{
+		return rewards[idAction];
+	}
+	
+	public void setRewards(float[] rewards) {
+		this.rewards = rewards;
+	}
+	
+	public void setRewards(float rewards, int idAction)
+	{
+		this.rewards[idAction] = rewards;
 	}
 	
 	public List<QState> createallQState(){
