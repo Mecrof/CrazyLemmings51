@@ -21,8 +21,8 @@ public class Mandator {
 	
 	// lab variable
 	private LinkedList<LemmingEnvironment> labs;
-	private int nbIterationPerLab = 10;
-	private int nbMaxLab = 3;
+	private int nbIterationPerLab = 100;
+	private int nbMaxLab = 4;
 	private int nbStepMaxInIteration = 30;
 	private LearningLemmingAgent agentLab;
 	private int frameRate;
@@ -34,7 +34,7 @@ public class Mandator {
 	public void runLab()
 	{
 		DefaultFrustrum frustrum = new DefaultFrustrum(null);
-		agentLab = new LearningLemmingAgent(0, 0, frustrum);
+		agentLab = new LearningLemmingAgent(0, 0, frustrum, true);
 		int nbStep;
 		int nbLab = (nbMaxLab > labs.size()) ? labs.size() : nbMaxLab;
 		//agentLab.setLearning(true);
@@ -114,9 +114,10 @@ public class Mandator {
 			{
 				LearningLemmingAgent ag = new LearningLemmingAgent(world.getStartPosition().x, 
 					world.getStartPosition().y, 
-					new DefaultFrustrum(world)
+					new DefaultFrustrum(world),
+					false
 					);
-			
+				ag.setqProblem(agentLab.getqProblem());
 				world.addWorldObject(ag.createBody());
 				engine.enableAgent(ag);
 			}

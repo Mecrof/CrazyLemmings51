@@ -46,8 +46,15 @@ public class LearningLemmingAgent extends LemmingAgent{
 
 	@Override
 	public void live() {
+		if (this.getBody().isDead())
+		{
+			killMe();
+		}
+		else
+		{
+		
 		// TODO Auto-generated method stub
-		System.out.println("--------------------------------------");
+		//System.out.println("--------------------------------------");
 		List<Perceivable> perceptions = this.getBody().getPerception();
 		
 		Random rnd = new Random();
@@ -127,7 +134,7 @@ public class LearningLemmingAgent extends LemmingAgent{
 		}
 		*/
 		//this.qLearning.setReward(previousState, action, this.getBody().getReward().reward);
-		
+		}
 	}
 	
 	public void getMemory(QState emptyMemory, QState loadedMemory)
