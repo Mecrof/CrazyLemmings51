@@ -20,8 +20,8 @@ public class DefaultFrustrum implements Sensor<TypeCell> {
 	      ___ ___ ___
          |   | x |   |
          |___|___|___|
-             |   |
-             |___|
+         |   |   |   |
+         |___|___|___|
              |   |
              |___|
              	
@@ -38,12 +38,19 @@ public class DefaultFrustrum implements Sensor<TypeCell> {
 		LinkedList<TypeCell> cells = new LinkedList<TypeCell>();
 		Point currentPosition = currentCell.getPosition();
 		
-		// adding cell at the left
+		// adding cell at the up left
 		cells.add(this.getCellAt(currentPosition.x-1, currentPosition.y));
+		// adding cell at the bottom left
+		cells.add(this.getCellAt(currentPosition.x-1, currentPosition.y+1));
+		
 		// adding currentCell
-		cells.add(currentCell);
-		// adding cell at the right
+		//cells.add(currentCell);
+		
+		// adding cell at the up right
 		cells.add(this.getCellAt(currentPosition.x+1, currentPosition.y));
+		// adding cell at the bottom right
+		cells.add(this.getCellAt(currentPosition.x+1, currentPosition.y+1));
+		
 		// adding cell at the bottom
 		cells.add(this.getCellAt(currentPosition.x, currentPosition.y+1));
 		// adding cell at the bottom of the bottom cell
