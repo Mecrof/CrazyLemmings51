@@ -150,5 +150,13 @@ public class LearningLemmingAgent extends LemmingAgent{
 	public void setqProblem(QProblem qProblem) {
 		this.qProblem = qProblem;
 	}
+	
+	public boolean isLearning() {
+		return isLearning;
+	}
+	
+	public void setLearning(boolean isLearning) {
+		this.isLearning = isLearning;
+	}
 
 }

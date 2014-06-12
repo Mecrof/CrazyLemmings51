@@ -12,4 +12,14 @@ public enum Action {
 	public static final int totalActions = 6;
 	
 	Action(int i) { this.id = i; }
+	
+	public static int getId(Action ac){return ac.id;}
+	public static Action getAction(int id){
+		for(Action ac : Action.values())
+		{
+			if (ac.id == id)
+				return ac;
+		}
+		return null;
+	}
 }
