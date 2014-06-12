@@ -1,5 +1,6 @@
 package environment.lemming;
 
+import java.awt.Point;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -15,11 +16,14 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 
 	private Portal portal;
 	private int deads;
+	private Point startPosition;
+	private String stageFile;
 	
-	public LemmingEnvironment(int w, int h) {
+	public LemmingEnvironment(int w, int h, String stage) {
 		super(w, h);
-		this.portal = null;
 		this.deads = 0;
+		this.stageFile = stage;
+		this.build();
 	}
 
 	@Override
@@ -27,14 +31,14 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 	{
 		TypeCell c;
 		cells = new LinkedList<TypeCell>();
-		StageParser parser = new StageParser("../../stage/stage_1");
+		StageParser parser = new StageParser(this.stageFile);
 		parser.load();
 		for (int i = 0; i < this.height; ++i)
 		{
 			for(int j = 0; j < this.width; ++j)
 			{
 				c = new TypeCell(j, i);
-				parser.setCellOjbect(c);
+				parser.setCellOjbect(c,this);
 				this.cells.add(c);
 			}
 		}
@@ -95,16 +99,17 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 		return res;
 	}
 	
-	public boolean setPortal(Portal p)
+	public void setPortal(Portal p)
 	{
-		try {
+		this.portal = p;
+		/*try {
 			this.addWorldObject(p);
 			this.portal = p;
 			return true;
 		} catch (CellNotFoundException e) {
 			e.printStackTrace();
 		}
-		return false;
+		return false;*/
 	}
 
 	public final Portal getPortal() {
@@ -128,6 +133,14 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 		{
 			it.next().onEnvironmentChanged(new EnvironmentEvent(new EnvironmentState<TypeCell>(this.cells, this.deads)));
 		}
+	}
+
+	public Point getStartPosition() {
+		return startPosition;
+	}
+
+	public void setStartPosition(Point startPosition) {
+		this.startPosition = startPosition;
 	}
 
 }

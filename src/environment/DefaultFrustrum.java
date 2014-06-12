@@ -28,7 +28,7 @@ public class DefaultFrustrum implements Sensor<TypeCell> {
 	x = currentPosition
 	
 	--------------------------*/
-	LemmingEnvironment environment;
+	private LemmingEnvironment environment;
 	
 	public DefaultFrustrum(LemmingEnvironment e) {
 		this.environment = e;
@@ -129,6 +129,10 @@ public class DefaultFrustrum implements Sensor<TypeCell> {
 
 	public Environment<TypeCell> getEnvironment() {
 		return environment;
+	}
+
+	public void setEnvironment(LemmingEnvironment environment) {
+		this.environment = environment;
 	}
 
 }

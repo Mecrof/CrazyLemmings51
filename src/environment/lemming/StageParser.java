@@ -41,7 +41,7 @@ public class StageParser {
 		}
 	}
 	
-	public void setCellOjbect(TypeCell c)
+	public void setCellOjbect(TypeCell c, LemmingEnvironment env)
 	{
 		try 
 		{
@@ -50,13 +50,21 @@ public class StageParser {
 			switch((char) charRead)
 			{
 				case '\n':
-					this.setCellOjbect(c);
+					this.setCellOjbect(c,env);
 					break;
 				case '\r':
-					this.setCellOjbect(c);
+					this.setCellOjbect(c,env);
 					break;
 				case 'V':
 					//nothing to do
+					break;
+				case 'E':
+					env.setStartPosition(c.getPosition());
+					break;
+				case '$':
+					Portal portal = new Portal(c.getPosition(), true);
+					c.addWorldObject(portal);
+					env.setPortal(portal);
 					break;
 				case 'G':
 					c.setType(Type.CLAY);
@@ -73,7 +81,6 @@ public class StageParser {
 		{
 			e.printStackTrace();
 		}
-		
 		
 	}
 }

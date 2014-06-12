@@ -32,5 +32,10 @@ abstract public class LemmingAgent extends Agent<Lemming> {
 	public boolean isKilled() {
 		return killed;
 	}
+	
+	public void ressucite()
+	{
+		killed = false;
+	}
 
 }

@@ -116,7 +116,7 @@ public class QProblem {
 				temp += "" + Type.getLetter(((PerceivedType) perceivedObject).getType());
 			}
 		}
-		System.out.println(temp);
+		//System.out.println(temp);
 		for(int i = 0; i < this.states.length; i++)
 		{
 			//System.out.println(this.states[i].getDescription());

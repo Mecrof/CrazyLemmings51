@@ -80,7 +80,7 @@ public class QLearning {
 		
 		
 		m.put(action, (float) feedbackValue);
-		System.out.println(feedbackValue);
+		//System.out.println(feedbackValue);
 	}
 	
 	
@@ -92,7 +92,7 @@ public class QLearning {
 		float bestScore = Float.NEGATIVE_INFINITY;
 		for(Entry<Action, Float> entry : m.entrySet())
 		{
-			System.out.println(entry.getKey().name() + " : " + getQ(state, entry.getKey()));
+			//System.out.println(entry.getKey().name() + " : " + getQ(state, entry.getKey()));
 			//System.out.println(entry.getValue());
 			if (entry.getValue() > bestScore)
 			{

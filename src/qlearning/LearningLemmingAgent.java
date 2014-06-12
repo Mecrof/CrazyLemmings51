@@ -40,7 +40,7 @@ public class LearningLemmingAgent extends LemmingAgent{
 	@Override
 	public void live() {
 		// TODO Auto-generated method stub
-		System.out.println("--------------------------------------");
+		//System.out.println("--------------------------------------");
 		List<Perceivable> perceptions = this.getBody().getPerception();
 		
 		Random rnd = new Random();
@@ -60,19 +60,19 @@ public class LearningLemmingAgent extends LemmingAgent{
 		
 		if(rnd.nextFloat() < rndAction)
 		{
-			System.out.println("Random action");
+			//System.out.println("Random action");
 			List<Action> actions = this.qProblem.getAvailableActionsFor(previousState);
 			action = actions.get(rnd.nextInt(actions.size()));
 		}
 		else
 		{
-			System.out.println("Best action");
+			//System.out.println("Best action");
 			action = this.qLearning.getBestAction(this.qProblem.getCurrentState());
 		}
 		//Action action = this.qLearning.getBestAction(this.qProblem.getCurrentState());
 		
 		ActionInfluence newAction = new ActionInfluence(this, action);
-		System.out.println(newAction.getAction().name());
+		//System.out.println(newAction.getAction().name());
 		
 		this.getBody().influence(newAction);
 		

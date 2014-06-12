@@ -50,7 +50,7 @@ public class LemmingEngine implements Engine {
 
 	@Override
 	public void initialize() {
-		Iterator<LemmingAgent> it = agents.iterator();
+		/*Iterator<LemmingAgent> it = agents.iterator();
 		lemmings = new LinkedList<Lemming>();
 		while(it.hasNext())
 		{
@@ -63,7 +63,7 @@ public class LemmingEngine implements Engine {
 			}
 			lemmings.add(body);
 		}
-		
+		*/
 		ended = false;
 	}
 
@@ -79,45 +79,50 @@ public class LemmingEngine implements Engine {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			Iterator<LemmingAgent> it = agents.iterator();
-			while(it.hasNext())
-			{
-				LemmingAgent ag = it.next();
-				if (ag.isKilled())
-				{
-					int index = agents.indexOf(ag);
-					it.remove();
-					Lemming lem = lemmings.remove(index);
-					try {
-						environment.detachWorldObject(lem);
-					} catch (CellNotFoundException e) {
-						e.printStackTrace();
-					}
-				}
-				else
-				{
-					ag.live();
-				}
-			}
-			Iterator<Lemming> itLem = lemmings.iterator();
-			while(itLem.hasNext())
-			{
-				Lemming lemming = itLem.next();
-				lemming.setDigging(false);
-				Influence influence = lemming.getInfluence();
-				Reward reward;
-				if (influence instanceof ActionInfluence)
-				{
-					reward = this.applyActionInfluence((ActionInfluence) influence, lemming);
-				}
-				else
-				{
-					reward = new Reward(Reward.NOTHING_HAPPENED);
-				}
-				lemming.setReward(reward);
-			}
+			runAgents();
 			this.environment.fireChange();
 			//System.out.println(this.environment.toString());
+		}
+	}
+	
+	public void runAgents()
+	{
+		Iterator<LemmingAgent> it = agents.iterator();
+		while(it.hasNext())
+		{
+			LemmingAgent ag = it.next();
+			if (ag.isKilled())
+			{
+				int index = agents.indexOf(ag);
+				it.remove();
+				Lemming lem = lemmings.remove(index);
+				try {
+					environment.detachWorldObject(lem);
+				} catch (CellNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				ag.live();
+			}
+		}
+		Iterator<Lemming> itLem = lemmings.iterator();
+		while(itLem.hasNext())
+		{
+			Lemming lemming = itLem.next();
+			lemming.setDigging(false);
+			Influence influence = lemming.getInfluence();
+			Reward reward;
+			if (influence instanceof ActionInfluence)
+			{
+				reward = this.applyActionInfluence((ActionInfluence) influence, lemming);
+			}
+			else
+			{
+				reward = new Reward(Reward.NOTHING_HAPPENED);
+			}
+			lemming.setReward(reward);
 		}
 	}
 	
@@ -313,5 +318,9 @@ public class LemmingEngine implements Engine {
 	public static void exit()
 	{
 		ended = true;
+	}
+
+	public void setEnvironment(LemmingEnvironment environment) {
+		this.environment = environment;
 	}
 }

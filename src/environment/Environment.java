@@ -21,7 +21,6 @@ public abstract class Environment<C extends Cell> {
 	public Environment(int w, int h)
 	{
 		this.width = w; this.height = h;
-		this.build();
 		this.listeners = new LinkedList<EnvironmentListener>();
 	}
 	
