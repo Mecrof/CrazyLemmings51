@@ -1,0 +1,76 @@
+@startuml
+skinparam classAttributeIconSize 0 
+skinparam class {
+	BackgroundColor White
+	ArrowColor Black
+	BorderColor Black
+}
+
+enum TYPE {
+  EMPTY 0
+  CLAY 1
+  FLOOR 2
+  ROCK 3
+  PORTAL 4
+}
+
+enum Action {
+  WALK_RIGHT 0
+  WALK_LEFT 1
+  STAY 2
+  DIG_BELOW 3
+  DIG_RIGHT 4
+  DIG_LEFT 5
+}
+
+interface Engine {
+ + void initialize()
+ + void run()
+}
+
+LemmingEngine ..|> Engine
+LemmingEngine "1" *-- Lock
+LemmingEngine "1" *-- LemmingEnvironment
+LemmingEngine "0..n" *-- Lemming
+LemmingEngine "0..n" *-- LemmingAgent
+LemmingEngine "7" *-- Reward
+class LemmingEngine {
+ - Reward r_Dig_In_Rock {final}
+ - Reward r_Dig_In_Air {final}
+ - Reward r_Walk_In_Solid_Type {final}
+ - Reward r_Go_Down_And_Die {final}
+ - Reward r_Logic_Action {final}
+ - Reward r_Stay {final}
+ - Reward r_Reached_Portal {final}
+ - Lock lock {final}
+ - Object mutex {final}
+ - int HIGH_TO_DIE {final}
+ - boolean ended {static}
+ - int timePerFrame
+ - LemmingEnvironment environment
+ - List<Lemming> lemmings
+ - List<LemmingAgent> agents
+ + void runAgents()
+ - Reward applyActionnInfluence(ActionInfluence influence, Lemming lemming)
+ - Reward dig(Lemming lemming, Action action)
+ - Reward walk(Lemming lemming, Action action)
+ - Reward routineForNewPosition(TypeCell targetCell, Lemming lemming)
+ - TypeCell getTargetCell(Lemming lemming, Action action)
+ - boolean goDown(TypeCell from, Lemming lemming)
+ + boolean enableAgent(LemmingAgent ag)
+ + Lock getLock()
+ + void exit() {static}
+ + void reset()
+ + void setEnvironment(LemmingEnvironment environment)
+ + Object getMutex()
+}
+
+class Lock {
+ - boolean locked
+ + void setLocked(boolean locked)
+ + boolean isLocked()
+ + void waitLock()
+ + void notifyUnlocked()
+}
+
+@enduml
