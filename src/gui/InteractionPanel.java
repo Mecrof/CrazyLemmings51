@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -215,6 +216,8 @@ public class InteractionPanel extends JPanel implements ActionListener {
 			}
 			else if(button == this.learn)
 			{
+				this.gui.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+
 				int setIteNumber = -1;
 				int setLabNumber = -1;
 				int setItPerLabNumber = -1; 
@@ -250,6 +253,8 @@ public class InteractionPanel extends JPanel implements ActionListener {
 				this.mandator.runLab();
 				
 				this.run.setEnabled(true);
+
+				this.gui.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			}
 			else if(button == this.run)
 			{
@@ -279,10 +284,13 @@ public class InteractionPanel extends JPanel implements ActionListener {
 			}
 			else if(button == this.reset)
 			{
-				this.mandator.reset();
-				this.reset.setEnabled(false);
-				this.run.setEnabled(true);
-				this.run.doClick();
+				if(this.mandator.reset())
+				{
+					this.mandator.reset();
+					this.reset.setEnabled(false);
+					this.run.setEnabled(true);
+					this.run.doClick();
+				}
 			}
 		}
 		else if(e.getSource() instanceof JRadioButton)

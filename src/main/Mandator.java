@@ -30,8 +30,8 @@ public class Mandator {
 	private LinkedList<String> labsPathName;
 	private int nbIterationPerLab = 100;
 
-	private int nbMaxLab =54;
-	private int nbStepMaxInIteration =730;
+	private int nbMaxLab = 5;
+	private int nbStepMaxInIteration = 70;
 	private LearningLemmingAgent agentLab;
 	private int frameRate;
 	private Executor singleThreadExecutor = Executors.newSingleThreadExecutor();
@@ -164,10 +164,15 @@ public class Mandator {
 		return engine;
 	}
 
-	public void reset()
+	public boolean reset()
 	{
+		if(this.engine.getLock().isLocked())
+			return false;
+		
 		LemmingEngine.exit();
-	}
+		return true;
+	}
+
 	public void setNbIterationPerLab(int nbIterationPerLab) 
 	{
 		this.nbIterationPerLab = nbIterationPerLab;
