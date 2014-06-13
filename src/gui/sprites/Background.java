@@ -17,7 +17,7 @@ public class Background extends Sprite {
 		
 		try
 		{
-			this.image = ImageIO.read(this.getClass().getResource("../../img/background.jpeg"));
+			this.image = ImageIO.read(this.getClass().getResource("../../img/Background.png"));
 		} 
 		catch (IOException e) 
 		{

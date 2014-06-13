@@ -12,16 +12,22 @@ import javax.swing.JFrame;
 import main.Mandator;
 import environment.engine.LemmingEngine;
 
+/**
+ * Main class for the GUI 
+ *
+ *
+ */
 public class GUI extends JFrame implements ComponentListener, WindowListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	protected final static int WIDTH = 800;
-	protected final static int HEIGHT = 600;
+	//ratios for scaling sprites
 	public static float RATIO_X = 10;
 	public static float RATIO_Y = 10;
 	
+	//panel showing the world
 	private World mainPanel;
+	//panel showing the buttons and fields
 	private InteractionPanel intPanel;
 	
 	public GUI()
@@ -43,17 +49,28 @@ public class GUI extends JFrame implements ComponentListener, WindowListener {
 		this.add(this.intPanel);
 	}
 
-	public World WorldPanel() 
+	/**
+	 * 
+	 * @return the main panel
+	 */
+	public World getWorldPanel() 
 	{
 		return this.mainPanel;
 	}
 
+	/**
+	 * Set the mouse listener for the main panel
+	 */
 	public void setMouseListener(MouseListener mouseListener)
 	{
 		this.mainPanel.addMouseListener(mouseListener);
 		this.mainPanel.addMouseMotionListener(mouseListener);
 	}
 
+	/**
+	 * Adjust the scaling factors when resizing the window 
+	 *
+	 */
 	@Override
 	public void componentResized(ComponentEvent arg0) 
 	{
@@ -61,6 +78,41 @@ public class GUI extends JFrame implements ComponentListener, WindowListener {
 		RATIO_Y = (int) ((this.mainPanel.getHeight() - 39) / 60.0f);
 		
 		this.mainPanel.updateSprites();
+	}
+	
+	/**
+	 * Set the mandator in the interaction panel
+	 */
+	public void setMandator(Mandator mandator) 
+	{
+		this.intPanel.setMandator(mandator);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public void setMandatorListenerData(Mandator mandator) {
+		MouseListener listener = (MouseListener) this.mainPanel.getMouseListeners()[0];
+		
+		listener.setWorld(mandator.getWorld());
+		listener.setLock(mandator.getEngine().getLock());
+	}
+
+	/**
+	 * Set the block type selected by the user
+	 */
+	public void setBlockType(environment.lemming.Type type) 
+	{
+		MouseListener listener = (MouseListener) this.mainPanel.getMouseListeners()[0];
+		
+		listener.setBlockType(type);
+	}
+	
+	@Override
+	public void windowClosing(WindowEvent arg0)
+	{
+		LemmingEngine.exit();
 	}
 	
 	@Override
@@ -90,12 +142,6 @@ public class GUI extends JFrame implements ComponentListener, WindowListener {
 	}
 
 	@Override
-	public void windowClosing(WindowEvent arg0)
-	{
-		LemmingEngine.exit();
-	}
-
-	@Override
 	public void windowDeactivated(WindowEvent arg0)
 	{
 	}
@@ -113,24 +159,5 @@ public class GUI extends JFrame implements ComponentListener, WindowListener {
 	@Override
 	public void windowOpened(WindowEvent arg0) 
 	{
-	}
-
-	public void setMandator(Mandator mandator) 
-	{
-		this.intPanel.setMandator(mandator);
-	}
-
-	public void setMandatorListenerData(Mandator mandator) {
-		MouseListener listener = (MouseListener) this.mainPanel.getMouseListeners()[0];
-		
-		listener.setWorld(mandator.getWorld());
-		listener.setLock(mandator.getEngine().getLock());
-	}
-
-	public void setBlockType(environment.lemming.Type type) 
-	{
-		MouseListener listener = (MouseListener) this.mainPanel.getMouseListeners()[0];
-		
-		listener.setBlockType(type);
 	}
 }

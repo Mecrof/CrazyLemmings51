@@ -20,6 +20,10 @@ import javax.swing.SpringLayout;
 import environment.lemming.Type;
 import main.Mandator;
 
+/**
+ * Panel showing the buttons and the fields
+ * 
+ */
 public class InteractionPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
@@ -45,6 +49,7 @@ public class InteractionPanel extends JPanel implements ActionListener {
 	
 	private GUI gui;
 	
+	@SuppressWarnings("serial")
 	public InteractionPanel(GUI gui)
 	{
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -160,15 +165,7 @@ public class InteractionPanel extends JPanel implements ActionListener {
 		
 	}
 	
-	public void setLabPath()
-	{
-		
-	}
-	
-	public void setStagePath()
-	{
-		
-	}
+	@Override
 	public Dimension getPreferredSize()
 	{
 		Dimension dim = super.getPreferredSize();
@@ -176,6 +173,8 @@ public class InteractionPanel extends JPanel implements ActionListener {
 		
 		return dim;
 	}
+	
+	@Override
 	public Dimension getMinimumSize()
 	{
 		Dimension dim = super.getMinimumSize();
@@ -184,6 +183,7 @@ public class InteractionPanel extends JPanel implements ActionListener {
 		return dim;
 	}
 	
+	@Override
 	public Dimension getMaximumSize()
 	{
 		Dimension dim = super.getMaximumSize();
@@ -260,7 +260,7 @@ public class InteractionPanel extends JPanel implements ActionListener {
 			{
 				this.mandator.loadWorld(this.setStage.getText());
 				
-				this.mandator.getWorld().addListener(this.gui.WorldPanel());
+				this.mandator.getWorld().addListener(this.gui.getWorldPanel());
 				this.gui.setMandatorListenerData(this.mandator);
 				this.mandator.getEngine().initialize();
 				

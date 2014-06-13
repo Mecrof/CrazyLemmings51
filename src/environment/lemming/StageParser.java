@@ -5,8 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import environment.Cell;
-
+/**
+ * Parser that loads the stages
+ *
+ */
 public class StageParser {
 
 	private String stageName;
@@ -17,6 +19,9 @@ public class StageParser {
 		this.stageName = name;
 	}
 	
+	/**
+	 * Load the file
+	 */
 	public void load()
 	{
 		try 
@@ -29,6 +34,9 @@ public class StageParser {
 		}
 	}
 	
+	/**
+	 * Close the file
+	 */
 	public void close()
 	{
 		try 
@@ -41,6 +49,12 @@ public class StageParser {
 		}
 	}
 	
+	/**
+	 * Set the object of the cell
+	 * 
+	 * @param c   the cell
+	 * @param env the current environment
+	 */
 	public void setCellOjbect(TypeCell c, LemmingEnvironment env)
 	{
 		try 
@@ -50,10 +64,10 @@ public class StageParser {
 			switch((char) charRead)
 			{
 				case '\n':
-					this.setCellOjbect(c,env);
+					this.setCellOjbect(c, env);
 					break;
 				case '\r':
-					this.setCellOjbect(c,env);
+					this.setCellOjbect(c, env);
 					break;
 				case 'V':
 					//nothing to do

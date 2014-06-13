@@ -25,10 +25,16 @@ import gui.sprites.GroundUp;
 import gui.sprites.Lemmings;
 import gui.sprites.Rock;
 
+/**
+ * Main panel displaying the world 
+ *
+ *
+ */
 public class World extends JPanel implements EnvironmentListener {
 
 	private static final long serialVersionUID = 6772576164000906224L;
 	
+	//all the sprites
 	private final Lemmings lemming;
 	private final Rock rock;
 	private final Ground ground;
@@ -36,11 +42,15 @@ public class World extends JPanel implements EnvironmentListener {
 	private final Exit exit;
 	private final Background background;
 	
+	//current state of the world that is displayed
 	private EnvironmentState<TypeCell> state;
+	//current position of the portal
 	private Point portalPosition;
 	
+	//the current image representing the world
 	private BufferedImage world;
 
+	//true if the world is being edited
 	private boolean editionMode;
 	
 	public World()
@@ -58,6 +68,11 @@ public class World extends JPanel implements EnvironmentListener {
 		this.world = null;
 	}
 	
+	/**
+	 * Paint the current state of the world
+	 * 
+	 * @param g the graphics used to paint the world
+	 */
 	@SuppressWarnings("incomplete-switch")
 	public void paintWorld(Graphics g)
 	{
@@ -174,6 +189,7 @@ public class World extends JPanel implements EnvironmentListener {
 		g.setColor(Color.BLACK);
 	}
 
+	@Override
 	public void paintComponent(Graphics g)
 	{
 		if(this.world != null && !this.editionMode)
@@ -199,6 +215,9 @@ public class World extends JPanel implements EnvironmentListener {
 		}	
 	}
 	
+	/**
+	 * Sets the environment state and repaint the world
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onEnvironmentChanged(EnvironmentEvent event)
@@ -215,11 +234,9 @@ public class World extends JPanel implements EnvironmentListener {
 		this.repaint();
 	}
 
-	public Graphics getWorldGraphics()
-	{
-		return this.world.getGraphics();
-	}
-	
+	/**
+	 * Update the size of the sprites
+	 */
 	public void updateSprites() 
 	{
 		this.lemming.updateSprite();
@@ -229,6 +246,11 @@ public class World extends JPanel implements EnvironmentListener {
 		this.exit.updateSprite();
 	}
 
+	/**
+	 * Set the edition mode flag
+	 * 
+	 * @param b the flag
+	 */
 	public void setEditionMode(boolean b) 
 	{
 		this.editionMode = b;
