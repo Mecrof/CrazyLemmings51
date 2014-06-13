@@ -1,0 +1,162 @@
+@startuml
+skinparam classAttributeIconSize 0 
+skinparam class {
+	BackgroundColor White
+	ArrowColor Black
+	BorderColor Black
+}
+
+enum TYPE {
+  EMPTY 0
+  CLAY 1
+  FLOOR 2
+  ROCK 3
+  PORTAL 4
+}
+
+enum Action {
+  WALK_RIGHT 0
+  WALK_LEFT 1
+  STAY 2
+  DIG_BELOW 3
+  DIG_RIGHT 4
+  DIG_LEFT 5
+}
+
+interface AgentBody {
+ + List<Perceivable> getPerception()
+ + void influence(Influence inf)
+ + boolean isDead()
+ + Sensor<?> getSensor()
+ + Reward getReward()
+ + int getDirection()
+}
+
+Cell o-- WorldObject
+abstract class Cell {
+ - Point position
+ - List<WorldObject> objects
+ + Iterator<WorldObject> getIterator()
+ + void addWorldObject(WorldObject o)
+ + void detachWorldObject(WorldObject o)
+ + GETTERS & SETTERS()
+}
+
+DefaultFrustrum ..|> Sensor
+DefaultFrustrum o-- LemmingEnvironment
+class DefaultFrustrum {
+ - LemmingEnvironment environment
+ + GETTERS & SETTERS()
+}
+
+Environment o-- EnvironmentListener
+Environment *-- Cell
+abstract class Environment <C extends Cell> {
+ - List<C> cells
+ - List<EnvironmentListener> listeners
+ # void build() {abstract}
+ + C getCellAt(Point p)
+ + void addWorldObject(WorldObject o)
+ + void detachWorldObject(WorldObject o)
+ + boolean addListener(EnvironmentListener listener)
+ + boolean removeListener(EnvironmentListener listener)
+ + void fireChange() {abstract}
+}
+
+interface Influence {
+ + Agent<AgentBody> getEmmiter()
+}
+
+interface Perceivable {
+ + Point getPosition()
+ + Point getDelta()
+}
+
+class Reward {
+ + int VERY_GOOD_ACTION {final} {static}
+ + int GOOD_ACTION {final} {static}
+ + int NOTHING_HAPPENED {final} {static}
+ + int BAD_ACTION {final} {static}
+ + int VERY_BAD_ACTION {final} {static}
+ + int YOU_STUPID {final} {static}
+ + int reward {final}
+}
+
+interface Sensor <C extends Cell> {
+ + List<Perceivable> getPerception(WorldObject ob)
+ + Environment<C> getEnvironment()
+}
+
+abstract class WorldObject {
+ - Point position
+ - boolean traversable
+ + Cell getCurrentCell(Environment<?> e)
+ + GETTERS & SETTERS()
+}
+note right
+setPosition replace
+the object in the environment
+at the new position too.
+end note
+
+ActionInfluence ..|> Influence
+ActionInfluence o-- Agent
+ActionInfluence o-- Action
+class ActionInfluence {
+ - Agent<AgentBody> emitter {final}
+ - Action action
+ + GETTERS & SETTERS()
+}
+
+Lemming --|> WorldObject
+Lemming ..|> AgentBody
+Lemming *-- Sensor
+Lemming *-- Reward
+Lemming *-- Influence
+class Lemming {
+ - int LEFT {final} {static}
+ - int RIGHT {final} {static}
+ - Sensor<TypeCell> frustrum
+ - int direction
+ - boolean digging
+ - boolean dead
+ - Reward reward
+ - Influence influence
+ + GETTERS & SETTERS()
+}
+
+LemmingEnvironment --|> Environment
+LemmingEnvironment o-- Portal
+class LemmingEnvironment {
+ - Portal portal
+ - int deads
+ - int winners
+ - Point startPosition
+ - String stageFile
+ + void addNewDeadOne()
+ + void addNewWinner()
+ + GETTERS & SETTERS()
+}
+
+PerceivedType ..|> Perceivable
+PerceivedType o-- TYPE
+class PerceivedType {
+ - Point position {final}
+ - Point delta {final}
+ - Point portalDirection {final}
+ - Type type
+ + GETTERS & SETTERS()
+}
+
+Portal --|> WorldObject
+class Portal
+
+TypeCell --|> Cell
+TypeCell o-- TYPE
+class TypeCell {
+ - Type type
+ + boolean containsPortal()
+ + GETTERS & SETTERS()
+}
+
+@enduml
