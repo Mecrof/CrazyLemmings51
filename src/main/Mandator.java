@@ -1,4 +1,5 @@
 package main;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -7,75 +8,91 @@ import java.util.LinkedList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-
 import qlearning.LearningLemmingAgent;
 import environment.DefaultFrustrum;
 import environment.engine.LemmingEngine;
 import environment.exceptions.CellNotFoundException;
 import environment.lemming.LemmingEnvironment;
 
-
-
+/**
+ * Object managing the lab work and the main engine
+ * 
+ */
 public class Mandator {
 	
+	//current lemming environmnet
 	private LemmingEnvironment world;
+	//currnet lemming engine
 	private LemmingEngine engine;
 	
+	//sizae of a lab world
 	private final int LAB_STAGE_SIZE = 8;
 	
-	
-	// lab variable
+	//path to the lab file
 	private LinkedList<String> labsPathName;
+	
+	//number of iterations in a lab world
 	private int nbIterationPerLab = 100;
-
+	//number of labs to run
 	private int nbMaxLab = 5;
+	//number of step during an iteration of the lab world
 	private int nbStepMaxInIteration = 70;
+	
+	//the agent learning
 	private LearningLemmingAgent agentLab;
+	//the frame rate of the engine
 	private int frameRate;
+	
+	//the executor managing th engine thread
 	private Executor singleThreadExecutor = Executors.newSingleThreadExecutor();
 	
-	public Mandator(int fps) {
+	public Mandator(int fps) 
+	{
 		this.frameRate = fps;
 	}
 		
+	/**
+	 * Run a lab learning simulation
+	 */
 	public void runLab()
 	{
 		DefaultFrustrum frustrum = new DefaultFrustrum(null);
 		agentLab = new LearningLemmingAgent(0, 0, frustrum, true);
 		int nbStep;
 		int nbLab = (nbMaxLab > labsPathName.size()) ? labsPathName.size() : nbMaxLab;
-		//agentLab.setLearning(true);
+		
 		for(int i = 0; i < nbLab; i++)
 		{
-			
 			for (int j = 0; j < nbIterationPerLab; j++)
 			{
 				System.out.println("##"+j);
+				
 				LemmingEnvironment currentEnvironment = new LemmingEnvironment(LAB_STAGE_SIZE, LAB_STAGE_SIZE, labsPathName.get(i));
 				frustrum.setEnvironment(currentEnvironment);
 				engine = new LemmingEngine(currentEnvironment, frameRate);
-				//System.out.println(currentEnvironment.toString());
 				
 				nbStep = 0;
 				agentLab.createBody().setDead(false);
 				agentLab.createBody().setPosition(currentEnvironment, currentEnvironment.getStartPosition());
-				//currentEnvironment.addWorldObject(agentLab.createBody());
+		
 				engine.enableAgent(agentLab);
 				agentLab.ressucite();
+				
 				while (nbStep < nbStepMaxInIteration && !agentLab.isKilled())
 				{
-					//System.out.println(currentEnvironment.toString());
 					System.out.print(".");
 					nbStep++;
 					engine.runAgents();
 				}
+				
 				System.out.println();
 			}
 		}
 	}
 	
+	/**
+	 * Run the main world
+	 */
 	public void runInWorld()
 	{
 		singleThreadExecutor.execute(new Runnable() {
@@ -85,22 +102,24 @@ public class Mandator {
 				engine.run();
 			}
 		});
-
-		/*
-		if (addingLemming)
-		{
-			this.addLemmingInWorld();
-		}
-		engine.runAgents();
-		this.world.fireChange();*/
 	}
 	
+	/**
+	 * Load a world file
+	 * 
+	 * @param stageFile the path to the file
+	 */
 	public void loadWorld(String stageFile)
 	{
 		world = new LemmingEnvironment(80, 60, stageFile);
 		engine = new LemmingEngine(world, frameRate);
 	}
 	
+	/**
+	 * Load the lab worlds
+	 * 
+	 * @param labStageFile the path to the file containing the name of the worlds
+	 */
 	public void loadLabs(String labStageFile)
 	{
 		labsPathName = new LinkedList<String>();
@@ -129,41 +148,43 @@ public class Mandator {
 		}
 	}
 	
+	/**
+	 * Add a number of lemmings to the world
+	 * 
+	 * @param number the number of lemmings to add
+	 */
 	public synchronized void addLemmingsInWorld(int number)
 	{
-		synchronized (this.engine.getMutex()) {
-			
-		
-		// TODO: clone memory of agentLab in the new agent
-		try {
-			LearningLemmingAgent ag;
-			for (int i = 0; i < number; i++)
+		synchronized(this.engine.getMutex()) 
+		{	
+			try 
 			{
-				ag = new LearningLemmingAgent(world.getStartPosition().x, 
-					world.getStartPosition().y, 
-					new DefaultFrustrum(world),
-					false
-					);
-			
-				ag.setqProblem(agentLab.getqProblem());
-				world.addWorldObject(ag.createBody());
-				engine.enableAgent(ag);
+				LearningLemmingAgent ag;
+				for (int i = 0; i < number; i++)
+				{
+					ag = new LearningLemmingAgent(world.getStartPosition().x, 
+						world.getStartPosition().y, 
+						new DefaultFrustrum(world),
+						false
+						);
+				
+					ag.setqProblem(agentLab.getqProblem());
+					world.addWorldObject(ag.createBody());
+					engine.enableAgent(ag);
+				}
+			} 
+			catch (CellNotFoundException e) {
+				System.out.println("Error during adding new agent lemming in Mandator");
+				e.printStackTrace();
 			}
-		} catch (CellNotFoundException e) {
-			System.out.println("Error during adding new agent lemming in Mandator");
-			e.printStackTrace();
-		}
 		}
 	}
 
-	public LemmingEnvironment getWorld() {
-		return world;
-	}
-
-	public LemmingEngine getEngine() {
-		return engine;
-	}
-
+	/**
+	 * Reset the engine if possible
+	 * 
+	 * @return true if the engine is reseted
+	 */
 	public boolean reset()
 	{
 		if(this.engine.getLock().isLocked())
@@ -171,12 +192,22 @@ public class Mandator {
 		
 		LemmingEngine.exit();
 		return true;
+	}
+	public LemmingEnvironment getWorld() 
+	{
+		return world;
 	}
-
+
+	public LemmingEngine getEngine() 
+	{
+		return engine;
+	}
+	
 	public void setNbIterationPerLab(int nbIterationPerLab) 
 	{
 		this.nbIterationPerLab = nbIterationPerLab;
 	}
+	
 	public void setNbMaxLab(int nbMaxLab)
 	{
 		this.nbMaxLab = nbMaxLab;

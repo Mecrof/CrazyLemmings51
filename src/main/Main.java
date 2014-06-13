@@ -1,14 +1,7 @@
 package main;
-import java.awt.Point;
 
 import javax.swing.UIManager;
 
-import qlearning.LearningLemmingAgent;
-import qlearning.RandomLemmingAgent;
-import environment.DefaultFrustrum;
-import environment.engine.LemmingEngine;
-import environment.lemming.LemmingEnvironment;
-import environment.lemming.Portal;
 import gui.GUI;
 import gui.MouseListener;
 
@@ -16,61 +9,25 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		 try {
-	            // Set cross-platform Java L&F (also called "Metal")
-	        UIManager.setLookAndFeel(
-	            UIManager.getSystemLookAndFeelClassName());
-	    } 
-	    catch (Exception e) {
-	       // handle exception
-	    }
-		/*
-		LemmingEnvironment e = new LemmingEnvironment(80, 60, "../../stage/stage_1");
-		Point startPosition = e.getStartPosition();
-		
-		LemmingEngine engine = new LemmingEngine(e, 250);
-		/*
-		RandomLemmingAgent lemming2 = new RandomLemmingAgent("Lemming2",77, 52, new DefaultFrustrum(e));
-		engine.enableAgent(lemming2);
-		//*/
-		/*
-		LearningLemmingAgent lemming = new LearningLemmingAgent(10, 50, new DefaultFrustrum(e));
-		engine.enableAgent(lemming);
-		//*/
-		/*
-		RandomLemmingAgent lemming;
-		for (int i = 0; i < 10; i++)
+		try 
 		{
-			int x = (int)(Math.random()*80.0);
-			int y = (int)(Math.random()*60.0);
-			lemming = new RandomLemmingAgent("Lemming"+i,startPosition.x, startPosition.y, new DefaultFrustrum(e));
-			engine.enableAgent(lemming);
-		}
-		//*/
-		//*
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	    } 
+	    catch (Exception e)
+	    {
+	       //never reach
+	    }
+	
+		//create the mandator
 		Mandator mandator = new Mandator(10);
-		//mandator.loadLabs("./stage/labStages");
-		//mandator.runLab();
-		//*/
-		//*
-		//Mandator mandator = new Mandator(100);
-		//mandator.loadWorld("../../stage/stage_1");
+
+		//create the GUI
 		GUI gui = new GUI();
 		gui.setMandator(mandator);
 		gui.setMouseListener(new MouseListener());
-		
-		//mandator.getWorld().addListener(gui.WorldPanel());
-		//mandator.getEngine().initialize();
-		
+
 		gui.pack();
 		gui.setVisible(true);
-		
-		//System.out.println(e.toString());
-		//engine.run();
-		
-		//mandator.addLemmingsInWorld(20);
-		//mandator.runInWorld();
-		//*/
 	}
 
 }

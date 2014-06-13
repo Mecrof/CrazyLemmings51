@@ -2,6 +2,11 @@ package environment;
 
 import java.util.LinkedList;
 
+/**
+ * Object containing the current state of the environment
+ *
+ * @param <C> the type of cell
+ */
 public class EnvironmentState<C extends Cell> {
 
 	private LinkedList<C> world;
@@ -19,12 +24,12 @@ public class EnvironmentState<C extends Cell> {
 	{
 		return this.world;
 	}
-	
+
 	public int getDeadNubmer()
 	{
 		return this.deads;
 	}
-	
+
 	public int getWinnerNubmer()
 	{
 		return this.winners;

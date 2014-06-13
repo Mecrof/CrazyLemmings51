@@ -15,6 +15,12 @@ import environment.lemming.LemmingEnvironment;
 import environment.lemming.Type;
 import environment.lemming.TypeCell;
 
+/**
+ * Mouse listener for the main panel allowing the user
+ * to add/remove blocks in real time
+ * 
+ *
+ */
 public class MouseListener extends MouseAdapter {
 
 	private LemmingEnvironment environment;
@@ -28,11 +34,21 @@ public class MouseListener extends MouseAdapter {
 		this.typeBlock = Type.ROCK;
 	}
 	
+	/**
+	 * Set the environment
+	 * 
+	 * @param e the environment
+	 */
 	public void setWorld(LemmingEnvironment e)
 	{
 		this.environment = e;
 	}
 	
+	/**
+	 * Set the lock from the engine
+	 * 
+	 * @param lock
+	 */
 	public void setLock(Lock lock)
 	{
 		this.lock = lock;
@@ -124,6 +140,8 @@ public class MouseListener extends MouseAdapter {
 				case CLAY:
 					cell.setType(Type.CLAY);
 					break;
+				default:
+					break;
 			}
 			
 		}
@@ -144,6 +162,11 @@ public class MouseListener extends MouseAdapter {
 		});
 	}
 
+	/**
+	 * Set the block type selected by the user
+	 * 
+	 * @param type the type selected
+	 */
 	public void setBlockType(Type type) 
 	{
 		this.typeBlock = type;

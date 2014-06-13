@@ -1,5 +1,9 @@
 package gui.sprites;
 
+/**
+ * Type of sprites that can be created
+ *
+ */
 public enum Type {
 
 	ROCK,
