@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * This class is used to make the agent learn with the setReward function.
+ * Once the agent has reward for a specific set of State/Action, he can get the bestAction to do
+ * /
 public class QLearning {
 
 	private final QProblem problem;
