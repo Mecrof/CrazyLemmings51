@@ -1,5 +1,10 @@
 package environment;
 
+/**
+ * 
+ * Rewards available
+ *
+ */
 public class Reward {
 	
 	public static final int VERY_GOOD_ACTION = 100;

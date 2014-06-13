@@ -11,6 +11,26 @@ import environment.lemming.PerceivedType;
 import environment.lemming.Type;
 import environment.lemming.TypeCell;
 
+/**
+ * 
+ * DefaultFrustum is an implementation of {@link Sensor} in the case of a {@link LemmingEnvironment}
+ * with {@link TypeCell} as {@link Cell}.
+ * -------------------------
+ *	    DEFAULT FRUSTRUM
+ *	         SHAPE
+ * -------------------------
+ *	      ___ ___ ___
+ *       |   | x |   |
+ *       |___|___|___|
+ *       |   |   |   |
+ *       |___|___|___|
+ *           |   |
+ *           |___|
+ *            	
+ *	x = currentPosition
+ *	
+ * -------------------------
+ */
 public class DefaultFrustrum implements Sensor<TypeCell> {
 
 	/*------------------------
@@ -34,7 +54,12 @@ public class DefaultFrustrum implements Sensor<TypeCell> {
 		this.environment = e;
 	}
 
-	public List<TypeCell> getPerceivedCells(TypeCell currentCell) {
+	/**
+	 * gets the perceived cells in the frustrum from the cell given
+	 * @param currentCell cell from the cells will be perceived
+	 * @return list of the cells perceived
+	 */
+	private List<TypeCell> getPerceivedCells(TypeCell currentCell) {
 		LinkedList<TypeCell> cells = new LinkedList<TypeCell>();
 		Point currentPosition = currentCell.getPosition();
 		
@@ -118,6 +143,13 @@ public class DefaultFrustrum implements Sensor<TypeCell> {
 		return perceivedObjects;
 	}
 	
+	/**
+	 * gets a {@link TypeCell} at the position asked. If, the position is out of
+	 * the environment, it returns a ROCK type.
+	 * @param x position in x
+	 * @param y position in y
+	 * @return the TypeCell found
+	 */
 	private TypeCell getCellAt(int x, int y)
 	{
 		try {

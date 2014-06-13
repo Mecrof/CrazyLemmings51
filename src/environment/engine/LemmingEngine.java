@@ -5,42 +5,46 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import qlearning.Action;
-import qlearning.LearningLemmingAgent;
 import qlearning.LemmingAgent;
+import environment.Cell;
+import environment.Environment;
 import environment.Influence;
 import environment.Reward;
-import environment.WorldObject;
 import environment.exceptions.CellNotFoundException;
 import environment.lemming.ActionInfluence;
 import environment.lemming.Lemming;
 import environment.lemming.LemmingEnvironment;
-import environment.lemming.Portal;
 import environment.lemming.Type;
 import environment.lemming.TypeCell;
 
 public class LemmingEngine implements Engine {
 	
-	// rewards
+	// rewards whose can be given
 	private final Reward r_Dig_In_Rock = new Reward(		Reward.YOU_STUPID); 	// -2
 	private final Reward r_Dig_In_Air = new Reward(			Reward.YOU_STUPID); 	// -2
 	private final Reward r_Walk_In_Solid_Type = new Reward(	Reward.VERY_BAD_ACTION); 	// -2
 	private final Reward r_Go_Down_And_Die = new Reward(	Reward.YOU_STUPID); 		// -100
-	private final Reward r_Closer_To_Portal = new Reward(	Reward.GOOD_ACTION); 		// +100
-	private final Reward r_Further_To_Portal = new Reward(	Reward.BAD_ACTION);  		// -1
+	private final Reward r_Logic_Action = new Reward(		Reward.GOOD_ACTION); 		// +100
+	//private final Reward r_Further_To_Portal = new Reward(	Reward.BAD_ACTION);  		// -1
 	private final Reward r_Stay = new Reward(				Reward.NOTHING_HAPPENED); 	// +0
 	private final Reward r_Reached_Portal = new Reward(		Reward.VERY_GOOD_ACTION);	// +2
-	private final Reward r_Go_Under_Portal = new Reward(	Reward.YOU_STUPID);         // -100
+	//private final Reward r_Go_Under_Portal = new Reward(	Reward.YOU_STUPID);         // -100
 	
+	// allow to pause the engine thread safely 
 	private final Lock LOCK = new Lock();
+	// allow to enable agents thread safely
 	private final Object mutex = new Object();
 	
+	// high which the lemming dies
 	private final int HIGH_TO_DIE = 7;
 	
 	private static boolean ended;
 	
 	private int timePerFrame;
 	private LemmingEnvironment environment;
+	// list of the lemming (body/object) in the world
 	private LinkedList<Lemming> lemmings;
+	// list of the agent in the world
 	private LinkedList<LemmingAgent> agents;	
 	
 	public LemmingEngine(LemmingEnvironment e, int tpf) {
@@ -51,26 +55,14 @@ public class LemmingEngine implements Engine {
 	}
 
 	@Override
-	public void initialize() {
-		/*Iterator<LemmingAgent> it = agents.iterator();
-		lemmings = new LinkedList<Lemming>();
-		while(it.hasNext())
-		{
-			Lemming body = it.next().createBody();
-			try {
-				environment.addWorldObject(body);
-			} catch (CellNotFoundException e) {
-				System.out.println("ERROR::LemmingEngine::initialize::Lemming can not be added into the environment.");
-				e.printStackTrace();
-			}
-			lemmings.add(body);
-		}
-		*/
+	public void initialize() 
+	{
 		ended = false;
 	}
 
 	@Override
-	public void run() {
+	public void run() 
+	{
 		while(!ended)
 		{
 			if(LOCK.isLocked())
@@ -87,6 +79,12 @@ public class LemmingEngine implements Engine {
 		}
 	}
 	
+	/**
+	 * Executes agents has :
+	 * delete agents killed
+	 * agents.live()
+	 * apply lemming's influences obtained
+	 */
 	public void runAgents()
 	{
 		synchronized(this.mutex)
@@ -135,6 +133,12 @@ public class LemmingEngine implements Engine {
 		}
 	}
 	
+	/**
+	 * Apply the {@link ActionInfluence} given to the {@link Lemming} given
+	 * @param influence
+	 * @param lemming
+	 * @return Reward obtained
+	 */
 	private Reward applyActionInfluence(ActionInfluence influence, Lemming lemming)
 	{
 		if (!lemming.isDead())
@@ -157,6 +161,12 @@ public class LemmingEngine implements Engine {
 		return new Reward(Reward.NOTHING_HAPPENED);
 	}
 	
+	/**
+	 * apply the {@link Action} given to the {@link Lemming} given in the case of a DIG action
+	 * @param lemming
+	 * @param action
+	 * @return Reward obtained
+	 */
 	private Reward dig(Lemming lemming, Action action)
 	{
 		lemming.setDigging(true);
@@ -178,6 +188,12 @@ public class LemmingEngine implements Engine {
 		return reward;
 	}
 	
+	/**
+	 * apply the {@link Action} given to the {@link Lemming} given in the case of a WALK action
+	 * @param lemming
+	 * @param action
+	 * @return Reward obtained
+	 */
 	private Reward walk(Lemming lemming, Action action)
 	{
 		Reward reward = r_Dig_In_Rock;
@@ -198,10 +214,16 @@ public class LemmingEngine implements Engine {
 		return reward;
 	}
 	
+	/**
+	 * routine general to do the {@link Lemming} given with the {@link TypeCell} targeted. 
+	 * It may be see as the physical engine of the {@link LemmingEngine}
+	 * @param targetCell
+	 * @param lemming
+	 * @return Reward obtained
+	 */
 	private Reward routineForNewPosition(TypeCell targetCell, Lemming lemming)
 	{
 		Reward reward = r_Go_Down_And_Die;
-		Point currentPosition = lemming.getPosition();
 		try{
 			TypeCell bottomTargetCell = environment.getCellAt(targetCell.getPosition().x, targetCell.getPosition().y+1);
 			if (bottomTargetCell.getType() == Type.EMPTY)
@@ -215,7 +237,7 @@ public class LemmingEngine implements Engine {
 					}
 					else
 					{
-						return r_Closer_To_Portal;//isCloserToPortal(currentPosition, lemming.getPosition());
+						return r_Logic_Action;
 					}
 				}
 			}
@@ -228,7 +250,7 @@ public class LemmingEngine implements Engine {
 				}
 				else
 				{
-					return r_Closer_To_Portal;//isCloserToPortal(currentPosition, targetCell.getPosition());
+					return r_Logic_Action;
 				}
 			}
 		}catch(CellNotFoundException ex)
@@ -240,20 +262,19 @@ public class LemmingEngine implements Engine {
 			}
 			else
 			{
-				return r_Closer_To_Portal;//isCloserToPortal(currentPosition, targetCell.getPosition());
+				return r_Logic_Action;
 			}
 		}
 		return reward;
 	}
 	
-	/*private boolean isCloserToPortal(Point oldPos, Point newPos)
-	{
-		Point posPortal = environment.getPortal().getPosition();
-		if (posPortal.distance(oldPos) > posPortal.distance(newPos))
-			return true;
-		return false;
-	}*/
-	
+	/**
+	 * gets the target {@link TypeCell} with the {@link Action} given and the {@link Lemming} given
+	 * @param lemming
+	 * @param action
+	 * @return the {@link TypeCell} targeted
+	 * @throws CellNotFoundException if the {@link Cell} is out of bound the {@link Environment}
+	 */
 	private TypeCell getTargetCell(Lemming lemming, Action action) throws CellNotFoundException
 	{
 		TypeCell targetCell;
@@ -278,6 +299,13 @@ public class LemmingEngine implements Engine {
 		return targetCell;
 	}
 	
+	
+	/**
+	 * Kill the {@link Lemming} given if it is going down more than the HIGH_TO_DIE
+	 * @param from {@link TypeCell} from it starts
+	 * @param lemming
+	 * @return true if the lemming survived, false if it dies
+	 */
 	private boolean goDown(TypeCell from, Lemming lemming)
 	{
 		TypeCell tmpCell = from;
@@ -300,6 +328,11 @@ public class LemmingEngine implements Engine {
 		return true;
 	}
 
+	/**
+	 * add a runnable {@link LemmingAgent} in the Engine
+	 * @param ag
+	 * @return true if the agent has been correctly added
+	 */
 	public boolean enableAgent(LemmingAgent ag)
 	{
 		if (agents.add(ag))

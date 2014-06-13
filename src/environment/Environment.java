@@ -1,17 +1,18 @@
 package environment;
 
 import java.awt.Point;
-import java.util.Iterator;
 import java.util.LinkedList;
 
-import listener.EnvironmentEvent;
 import listener.EnvironmentListener;
 import environment.exceptions.CellNotFoundException;
-import environment.lemming.Type;
 
+/**
+ * 
+ * An {@link Environment} can be seen as a grid of {@link Cell}.
+ *
+ * @param <C> the environment contains {@link Cell} or king of {@link Cell}
+ */
 public abstract class Environment<C extends Cell> {
-	
-	static public final int RANDOM = 0;
 	
 	protected int width;
 	protected int height;
@@ -24,10 +25,18 @@ public abstract class Environment<C extends Cell> {
 		this.listeners = new LinkedList<EnvironmentListener>();
 	}
 	
+	/**
+	 * this method build the {@link Cell} in the {@link Environment} and initialize
+	 */
 	abstract protected void build();
 	
-	abstract protected C createCell(int x, int y);
-	
+	/**
+	 * get the {@link Cell} at the position given
+	 * @param x position in x
+	 * @param y position in y
+	 * @return the {@link Cell} found
+	 * @throws CellNotFoundException generated if the position is out of the {@link Environment}
+	 */
 	public C getCellAt(int x, int y) throws CellNotFoundException
 	{
 		if (x >= this.width || x < 0 || y >= this.height || y <0)
@@ -35,39 +44,24 @@ public abstract class Environment<C extends Cell> {
 		return this.cells.get(this.width*y+x);
 	}
 	
+	/**
+	 * idem as getCellAt(x,y)
+	 * @param p position searched
+	 * @return the {@link Cell} found
+	 * @throws CellNotFoundException generated if the position is out of the {@link Environment}
+	 */
 	public C getCellAt(Point p) throws CellNotFoundException
 	{
 		return this.getCellAt(p.x, p.y);
 	}
 	
 	/**
-	 * NOT FUNCTIONNAL YET !	
-	 * @param worldType
+	 * get position in the list of {@link Cell} of a {@link Cell} from
+	 * its position in (x,y) in the "real world"
+	 * @param x position in x
+	 * @param y position in y
+	 * @return position in the list of {@link Cell}
 	 */
-	public void generateWorld(int worldType)
-	{
-		switch(worldType)
-		{
-		case RANDOM:
-			this.generateRandom();
-		}
-	}
-	
-	/**
-	 * NOT FUNCTIONNAL YET !
-	 */
-	private void generateRandom() // TODO : NOT FONCTIONNAL YET!
-	{
-		for (int i = this.height-1; i >= 0; --i)
-			for(int j = 0; j < this.width; ++j)
-			{
-				int tmp = (int)(Math.random() * 2);
-				Type t = Type.getType(tmp);
-				if (t == null) throw new Error("GenerateWorld in random mode : internal error. Generated Type is null.");
-				C c = this.cells.get(this.getPosition(j, i));
-			}
-	}
-	
 	protected int getPosition(int x, int y)
 	{
 		return y*this.width+x;
@@ -83,15 +77,28 @@ public abstract class Environment<C extends Cell> {
 		this.getCellAt(o.getPosition()).detachWorldObject(o);
 	}
 	
+	/**
+	 * add listener in the {@link Environment} for fireChange()
+	 * @param listener
+	 * @return true if correctly added
+	 */
 	public boolean addListener(EnvironmentListener listener)
 	{
 		return this.listeners.add(listener);
 	}
 	
+	/**
+	 * remove listener from the {@link Environment} for fireChange()
+	 * @param listener
+	 * @return true if correctly removed
+	 */
 	public boolean removeListener(EnvironmentListener listener)
 	{
 		return this.listeners.remove(listener);
 	}
 	
+	/**
+	 * fires event to listeners
+	 */
 	public abstract void fireChange();
 }

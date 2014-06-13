@@ -4,6 +4,12 @@ import java.awt.Point;
 
 import environment.Perceivable;
 
+/**
+ * 
+ * Is a {@link Perceivable} object. It contains the position of the {@link Type} found and the
+ * relative position from the perceiver.
+ *
+ */
 public class PerceivedType implements Perceivable {
 	
 	private final Point position;

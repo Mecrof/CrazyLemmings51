@@ -4,6 +4,12 @@ import java.awt.Point;
 
 import environment.exceptions.CellNotFoundException;
 
+/**
+ * 
+ * WorldObject is an object used to be in {@link Cell} of an {@link Environment}.
+ * It may be traversable or not.
+ *
+ */
 public abstract class WorldObject {
 	
 	private Point position;
@@ -28,6 +34,13 @@ public abstract class WorldObject {
 		this.traversable = t;
 	}
 	
+	/**
+	 * return the {@link Cell} where the {@link WorldObject} is contained in the {@link Environment} given
+	 * @param e
+	 * @return
+	 * @throws CellNotFoundException generated if cell not found (if the position of the {@link WorldObject} is
+	 * out of bound of the {@link Environment} given)
+	 */
 	public Cell getCurrentCell(Environment<?> e) throws CellNotFoundException
 	{
 		return e.getCellAt(position);
@@ -37,6 +50,11 @@ public abstract class WorldObject {
 		return position;
 	}
 
+	/**
+	 * Move the {@link WorldObject} in the {@link Environment} given to the new position given.
+	 * @param e
+	 * @param position
+	 */
 	public void setPosition(Environment<?> e, Point position) {
 		try{
 			Cell c = e.getCellAt(this.position);

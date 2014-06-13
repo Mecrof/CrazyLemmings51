@@ -4,6 +4,11 @@ import java.awt.Point;
 
 import environment.WorldObject;
 
+/**
+ * 
+ * Is the goal of the lemmings
+ *
+ */
 public class Portal extends WorldObject {
 
 	public Portal() {

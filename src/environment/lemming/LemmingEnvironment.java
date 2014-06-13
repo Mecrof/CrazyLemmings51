@@ -6,12 +6,17 @@ import java.util.LinkedList;
 
 import listener.EnvironmentEvent;
 import listener.EnvironmentListener;
+import environment.Cell;
 import environment.Environment;
 import environment.EnvironmentState;
 import environment.WorldObject;
 import environment.exceptions.CellNotFoundException;
-import gui.sprites.Sprite;
 
+/**
+ * 
+ * Specialization of an {@link Environment} to contain {@link TypeCell} as {@link Cell}
+ *
+ */
 public class LemmingEnvironment extends Environment<TypeCell> {
 
 	private Portal portal;
@@ -45,11 +50,6 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 			}
 		}
 		parser.close();
-	}
-
-	@Override
-	protected TypeCell createCell(int x, int y) {
-		return new TypeCell(x, y);
 	}
 	
 	public String toString()
@@ -104,14 +104,6 @@ public class LemmingEnvironment extends Environment<TypeCell> {
 	public void setPortal(Portal p)
 	{
 		this.portal = p;
-		/*try {
-			this.addWorldObject(p);
-			this.portal = p;
-			return true;
-		} catch (CellNotFoundException e) {
-			e.printStackTrace();
-		}
-		return false;*/
 	}
 
 	public final Portal getPortal() {

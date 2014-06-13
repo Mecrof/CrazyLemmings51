@@ -5,6 +5,12 @@ import java.util.Iterator;
 import environment.Cell;
 import environment.WorldObject;
 
+/**
+ * 
+ * Is a specialization of {@link Cell} for the {@link LemmingEnvironment}. It
+ * contains the {@link Type} of the {@link Cell}.
+ *
+ */
 public class TypeCell extends Cell {
 	
 	private Type type;
@@ -35,6 +41,10 @@ public class TypeCell extends Cell {
 		this.type = type;
 	}
 
+	/**
+	 * checks if the cell contains the {@link Portal} object
+	 * @return true, if found, false if not
+	 */
 	public boolean containsPortal()
 	{
 		Iterator<WorldObject> it = this.getIterator();

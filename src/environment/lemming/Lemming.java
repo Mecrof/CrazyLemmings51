@@ -1,22 +1,19 @@
 package environment.lemming;
 
-import java.awt.Point;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
-import qlearning.Action;
 import environment.AgentBody;
-import environment.Cell;
-import environment.DefaultFrustrum;
-import environment.Environment;
 import environment.Influence;
 import environment.Perceivable;
 import environment.Reward;
 import environment.Sensor;
 import environment.WorldObject;
-import environment.exceptions.CellNotFoundException;
 
+/**
+ * Is an {@link AgentBody} and a {@link WorldObject} and seen as a lemming
+ * 
+ *
+ */
 public class Lemming extends WorldObject implements AgentBody {
 	
 	public static final int LEFT = -1;
@@ -46,34 +43,8 @@ public class Lemming extends WorldObject implements AgentBody {
 	}
 
 	@Override
-	public void influence(Influence inf) { // TODO thing about when influences are applied
+	public void influence(Influence inf) {
 		this.influence = inf;
-		/*
-		if (inf instanceof ActionInfluence)
-		{
-			ActionInfluence actionInfluence = (ActionInfluence) inf;
-			actionInfluence.getAction();
-			switch (actionInfluence.getAction()) {
-			case WALK_FRONT:
-				
-				break;
-			case WALK_BACK:
-				
-				break;
-			case DIG_FRONT:
-				
-				break;
-			case DIG_BACK:
-	
-				break;
-			case DIG_BELOW:
-	
-				break;
-			default:
-				return new Reward(Reward.NOTHING_HAPPENED);
-			}
-		}
-		return new Reward(Reward.NOTHING_HAPPENED);*/
 	}
 	
 	public void setDead(boolean d)
@@ -87,7 +58,7 @@ public class Lemming extends WorldObject implements AgentBody {
 	}
 
 	@Override
-	public Sensor getSensor() {
+	public Sensor<?> getSensor() {
 		return this.frustrum;
 	}
 	
