@@ -1,7 +1,6 @@
 package qlearning;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -21,14 +20,17 @@ public class LearningLemmingAgent extends LemmingAgent{
 	
 	private boolean isLearning = true;
 	
-	private final int Number_iterations = 5;
+	/*
+	 * rndAction is used to get a chance to have a random Action each time we call live() function
+	 */
+	private  float rndAction = 0.1f; 
 	
-	private  float rndAction = 0.1f;
 	
 	private QState oldState = null;
 	
 	private Action previousAction = null;
 	
+	@SuppressWarnings("rawtypes")
 	public LearningLemmingAgent(int posX, int posY, Sensor s, boolean isLearning) {
 		super(posX, posY, true, Lemming.RIGHT, s);
 		this.qProblem = new QProblem();
@@ -36,15 +38,19 @@ public class LearningLemmingAgent extends LemmingAgent{
 		this.isLearning = isLearning;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public LearningLemmingAgent(int posX, int posY, boolean traversable,
 			int direction, Sensor s) {
 		super(posX, posY, traversable, direction, s);
 		this.qProblem = new QProblem();
 		this.qLearning = new QLearning(this.qProblem);
 		this.isLearning = true;
-		// TODO Auto-generated constructor stub
 	}
-
+	
+	/**
+	 * Live function of the learning lemming agent. It's used to learn from lab session and use this knowledge
+	 * on real stage.
+	 */
 	@Override
 	public void live() {
 		if (this.getBody().isDead())
@@ -54,21 +60,16 @@ public class LearningLemmingAgent extends LemmingAgent{
 		}
 		else
 		{
-		
-		// TODO Auto-generated method stub
-		//System.out.println("--------------------------------------");
-		List<Perceivable> perceptions = this.getBody().getPerception();
-		
-		Random rnd = new Random();
-		
-		QState currentState = this.qProblem.getCurrentState();
-		Iterator<Perceivable> it = perceptions.iterator();
-		while(it.hasNext())
-		{
-			Perceivable perceivedObject = it.next();
-			if (perceivedObject instanceof PerceivedType)
+			List<Perceivable> perceptions = this.getBody().getPerception();
+			
+			Random rnd = new Random();
+			
+			Iterator<Perceivable> it = perceptions.iterator();
+			while(it.hasNext())
 			{
-				//System.out.println(perceivedObject.toString());
+				Perceivable perceivedObject = it.next();
+				if (perceivedObject instanceof PerceivedType)
+				{
 					Point portalDirection = ((PerceivedType) perceivedObject).getPortalDirection();
 					if (portalDirection.x == 0 && portalDirection.y == 0)
 					{
@@ -77,114 +78,70 @@ public class LearningLemmingAgent extends LemmingAgent{
 						this.win();
 						return;
 					}
+				}
 			}
-		}
 		
-		if(this.isLearning)
-		{
-			if(oldState!=null && previousAction !=null)
+			/*
+			 * If the Lemming is learning, this is used to set a reward to a state/action couple
+			 */
+			if(this.isLearning)
 			{
-				//System.out.println("test");
-				this.qLearning.setReward(oldState, previousAction, this.getBody().getReward().reward, currentState);
-			}
-		}
-		
-		this.qProblem.translateCurrentState(perceptions);
-		
-		QState previousState = this.qProblem.getCurrentState();
-		//System.out.println(previousState.getDescription());
-		oldState = this.qProblem.getCurrentState();
-		//this.qLearning.learn(Number_iterations);
-		
-		
-		
-		Action action = null;
-		//if (isLearning)
-		//{
-		if (isLearning)
-		{
-			rndAction =0.9f;
-		}
-			if(rnd.nextFloat() < rndAction)
-			{
-				//System.out.println("RANDOM !!!!");
-				List<Action> actions = this.qProblem.getAvailableActionsFor(previousState);
-				action = actions.get(rnd.nextInt(actions.size()));
-			}
-			else
-			{
-				//System.out.println("Best action");
-				if (isLearning)
+				if(oldState!=null && previousAction !=null)
 				{
-					action = this.qLearning.getBestAction(this.qProblem.getCurrentState());
+					this.qLearning.setReward(oldState, previousAction, this.getBody().getReward().reward);
+				}
+			}
+			
+			this.qProblem.translateCurrentState(perceptions);
+			
+			QState previousState = this.qProblem.getCurrentState();
+			oldState = this.qProblem.getCurrentState();		
+			
+			Action action = null;
+			if (isLearning)
+			{
+				rndAction =0.9f;
+			}
+				if(rnd.nextFloat() < rndAction)
+				{
+					List<Action> actions = this.qProblem.getAvailableActionsFor(previousState);
+					action = actions.get(rnd.nextInt(actions.size()));
 				}
 				else
 				{
-					QState state = this.qProblem.getCurrentState();
-					if (state.getLeftup()==Type.FLOOR && state.getRightup()==Type.FLOOR)
+					if (isLearning)
 					{
-						if (this.getBody().getDirection() == Lemming.LEFT)
-						{
-							action = Action.WALK_LEFT;
-						}
-						else
-						{
-							action = Action.WALK_RIGHT;
-						}
+						action = this.qLearning.getBestAction(this.qProblem.getCurrentState());
 					}
 					else
 					{
-						action = this.qLearning.getBestAction(state);
+						QState state = this.qProblem.getCurrentState();
+						if (state.getLeftup()==Type.FLOOR && state.getRightup()==Type.FLOOR)
+						{
+							if (this.getBody().getDirection() == Lemming.LEFT)
+							{
+								action = Action.WALK_LEFT;
+							}
+							else
+							{
+								action = Action.WALK_RIGHT;
+							}
+						}
+						else
+						{
+							action = this.qLearning.getBestAction(state);
+						}
 					}
 				}
-			}
-		/*}
-		else
-		{
-			action = this.qLearning.getBestAction(this.qProblem.getCurrentState());
-		}*/
-		//Action action = this.qLearning.getBestAction(this.qProblem.getCurrentState());
-		
-		ActionInfluence newAction = new ActionInfluence(this, action);
-		//System.out.println(newAction.getAction().name());
-		
-		this.getBody().influence(newAction);
-		
-		this.qProblem.translateCurrentState(perceptions);
-		
-		this.previousAction = action;
-		//String temp = new String();
-		
-		//QState tempstate = this.qProblem.getRandomState();
-		//String temp = tempstate.getDescription() + "  " + this.qLearning.getLearning(tempstate);
-		//System.out.println(temp);
-		
-		
-		//QState currentState = this.qProblem.getCurrentState();
-		
-		
-		/*
-		if(this.isLearning)
-		{
-			//TODO : Lab test
-			this.qLearning.setReward(previousState, action, this.getBody().getReward().reward, currentState);
-		}
-		*/
-		//this.qLearning.setReward(previousState, action, this.getBody().getReward().reward);
-		}
-	}
 	
-	public void getMemory(QState emptyMemory, QState loadedMemory)
-	{
-		for(int i = 0; i < Action.totalActions; i++)
-		{
-			emptyMemory.setRewards(loadedMemory.getRewards(i), i);
+			ActionInfluence newAction = new ActionInfluence(this, action);
+			
+			this.getBody().influence(newAction);
+			
+			this.qProblem.translateCurrentState(perceptions);
+			
+			this.previousAction = action;
 		}
-	}
-	
-	public void getMemory(QProblem emptyMemory, QProblem loadedMemory)
-	{
-		emptyMemory = loadedMemory;
 	}
 	
 	public QProblem getqProblem() {
