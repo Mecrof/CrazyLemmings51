@@ -12,6 +12,11 @@ import environment.lemming.Lemming;
 import environment.lemming.PerceivedType;
 import environment.lemming.Type;
 
+/**
+ * The LearningLemmingAgent inherit from LemmingAgent.
+ * In a first time, this agent trains himself in a lab session in order to get his knowledge of the world
+ * In a second time, this agent stop the lab session and with the things he learned, he tries to reach the portal alive
+ */
 public class LearningLemmingAgent extends LemmingAgent{
 
 	private QProblem qProblem;
