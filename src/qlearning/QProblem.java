@@ -9,6 +9,9 @@ import environment.Perceivable;
 import environment.lemming.PerceivedType;
 import environment.lemming.Type;
 
+/**
+ * This class get all the set of QState possible and used it to read perceptions into a QState
+ */
 public class QProblem {
 
 	private QState currentState = null;

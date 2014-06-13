@@ -3,6 +3,9 @@ package qlearning;
 import environment.lemming.Type;
 import qlearning.Action;
 
+/**
+ * This class create a QState and a array of float to store rewards from each action
+ */
 public class QState{
 	
 	private Type leftup;
