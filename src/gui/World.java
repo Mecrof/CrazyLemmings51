@@ -55,7 +55,7 @@ public class World extends JPanel implements EnvironmentListener {
 	
 	public World()
 	{
-		this.setPreferredSize(new Dimension(800 + 16, 600 + 39));
+		this.setPreferredSize(new Dimension(800, 600));
 		
 		this.lemming = new Lemmings();
 		this.rock = new Rock();
@@ -130,7 +130,7 @@ public class World extends JPanel implements EnvironmentListener {
 								p.y == this.portalPosition.y - 1)
 							continue;
 						
-						if(cells.get(GUI.WIDTH/10*(p.y-1)+p.x).getType() == Type.EMPTY)
+						if(cells.get(80*(p.y-1)+p.x).getType() == Type.EMPTY)
 							this.groundUp.paint(g, cell.getPosition());
 						else
 							this.ground.paint(g, cell.getPosition());
